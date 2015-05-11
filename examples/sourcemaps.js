@@ -53,7 +53,22 @@ function parse(str, options) {
 
 function render(ast, options) {
   options = extend({renderers: renderers, sourcemap: true}, options);
-  return snapdragon.renderer(ast, options).render();
+  var renderer = snapdragon.renderer(ast, options);
+
+  // source maps
+  if (options.sourcemap) {
+    var sourcemaps = require('../lib/source-maps');
+    sourcemaps(renderer);
+
+    var code = renderer.render();
+    renderer.applySourceMaps();
+
+    var map = options.sourcemap === 'generator'
+      ? renderer.map
+      : renderer.map.toJSON();
+    return { code: code, map: map };
+  }
+  return renderer.render();
 }
 
 /**
@@ -62,5 +77,4 @@ function render(ast, options) {
 
 var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
 var ast = parse(str);
-console.log(ast.nodes[0])
 console.log(render(ast));

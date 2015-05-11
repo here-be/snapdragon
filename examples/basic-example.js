@@ -7,7 +7,7 @@
  */
 
 var extend = require('extend-shallow');
-var example = require('./');
+var example = require('./app');
 var renderers = example.renderers;
 var snapdragon = require('../');
 
