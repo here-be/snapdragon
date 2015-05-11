@@ -1,0 +1,44 @@
+{
+  "name": "snapdragon",
+  "description": "Create your own parser and renderer.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/snapdragon",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jonschlinkert/snapdragon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/snapdragon/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/jonschlinkert/snapdragon/blob/master/LICENSE"
+  },
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "export-dirs": "^0.2.4",
+    "export-files": "^2.0.1",
+    "extend-shallow": "^1.1.2",
+    "minimist": "^1.1.1",
+    "set-value": "^0.1.6"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "keywords": []
+}
