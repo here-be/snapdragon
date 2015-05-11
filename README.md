@@ -4,7 +4,7 @@
 
 * Bootstrap your own parser, get sourcemap support for free
 * All parsing and rendering is handled by simple, reusable middleware functions
-* Inspired by the parsers in [Jade](http://jade-lang.com)and [CSS](https://github.com/reworkcss/css).
+* Inspired by the parsers in [Jade](http://jade-lang.com) and [CSS](https://github.com/reworkcss/css).
 
 ## Install
 
