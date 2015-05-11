@@ -1,6 +1,6 @@
 {
   "name": "snapdragon",
-  "description": "Create your own parser and renderer.",
+  "description": "snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.",
   "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": {
@@ -34,7 +34,9 @@
     "export-files": "^2.0.1",
     "extend-shallow": "^1.1.2",
     "minimist": "^1.1.1",
-    "set-value": "^0.1.6"
+    "source-map": "^0.4.2",
+    "source-map-resolve": "^0.3.1",
+    "urix": "^0.1.0"
   },
   "devDependencies": {
     "mocha": "*",
