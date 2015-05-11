@@ -66,7 +66,7 @@ function render(ast, options) {
     var map = options.sourcemap === 'generator'
       ? renderer.map
       : renderer.map.toJSON();
-    return { code: code, map: map };
+    return { orig: ast.orig, code: code, map: map };
   }
   return renderer.render();
 }
