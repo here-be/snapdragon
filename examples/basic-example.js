@@ -12,7 +12,8 @@ var renderers = example.renderers;
 var snapdragon = require('../');
 
 /**
- * Parse
+ * Generic middleware than can be customized
+ * and reused
  */
 
 function fn(re, type) {
@@ -28,8 +29,6 @@ function fn(re, type) {
     });
   };
 }
-
-
 
 function parse(str, options) {
   return snapdragon.parser(str, options)
