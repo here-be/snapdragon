@@ -1,6 +1,12 @@
 # snapdragon [![NPM version](https://badge.fury.io/js/snapdragon.svg)](http://badge.fury.io/js/snapdragon)
 
-> Create your own parser and renderer.
+> snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.
+
+* Bootstrap your own parser, get sourcemap support for free
+* All parsing and rendering is handled by simple, reusable middleware functions
+* Inspired by the parsers in [Jade] and [CSS].
+
+## Install
 
 Install with [npm](https://www.npmjs.com/)
 
@@ -8,164 +14,85 @@ Install with [npm](https://www.npmjs.com/)
 npm i snapdragon --save
 ```
 
-## Usage
+## Usage examples
 
 ```js
-var parserBase = require('snapdragon');
+var snapdragon = require('snapdragon');
+
+// custom parser middleware
+var ast = snapdragon.parser('some string')
+  .use(foo())
+  .use(bar())
+  .parse();
+
+var res = snapdragon.renderer(ast);
+  .set('foo', function () {})
+  .set('bar', function () {})
+  .render()
 ```
 
-## Parser API
+See the [examples](./examples/)
 
-### [.updatePosition](lib/parse.js#L83)
+* [basic](./examples/basic-example.js)
+* [filepath](./examples/filepath-example.js)
+* [sourcemaps](./examples/sourcemaps.js)
 
-Update this.lineno and this.column based on `str`.
+Try running all three examples from the command line. Just do `node examples/sourcemaps.js` etc.
 
-**Params**
+## Getting started
 
-* `str` **{String}**: Parsed out string used to determine updated line number and position.
+**Parsers**
 
-**Example**
+Parsers are middleware functions used for parsing a string into an ast node.
 
 ```js
-this.updatePosition('foo');
+var ast = snapdragon.parser(str, options)
+  .use(function() {
+    var pos = this.position();
+    var m = this.match(/^\./);
+    if (!m) return;
+    return pos({
+      // `type` specifies the renderer to use
+      type: 'dot',
+      val: m[0]
+    });
+  })
 ```
 
-### [.position](lib/parse.js#L102)
+**AST node**
 
-Mark position and update `node.position`.
-
-* `returns` **{Function}**: Function used to update the position when finished.
-
-**Example**
+When the parser finds a match, `pos()` is called, pushing a node onto the ast that looks something like:
 
 ```js
-var pos = this.position();
-var node = pos({type: 'parser'});
+{ type: 'dot',
+  val: '.',
+  position:
+   { start: { line: 1, column: 1 },
+     end: { line: 1, column: 2 } }
 ```
 
-### [.error](lib/parse.js#L122)
+**Renderers**
 
-Set an error message with the current line number and column.
-
-**Params**
-
-* `msg` **{String}**: Message to use in the Error.
-
-**Example**
+Renderers are middleware functions that visit over an array of ast nodes to render a string.
 
 ```js
-this.error('Error parsing string.');
+var res = snapdragon.renderer(ast)
+  .set('dot', function (node) {
+    console.log(node.val)
+    //=> '.'
+    return this.emit(node.val);
+  })
 ```
 
-### [.parser](lib/parse.js#L167)
+_(TBC)_
 
-Register a parser middleware by name, so it can be called by other parsers. Parsers are added to the `prototype` to allow using `this`.
+## TODO
 
-**Params**
-
-* `name` **{String}**: Name of the parser to add to the prototype.
-* `fn` **{Function}**: Rule function to add to the prototype.
-* `returns` **{Object}** `this`: to enable chaining.
-
-**Example**
-
-```js
-function heading() {
-  //=> do stuff
-}
-function heading() {
-  //=> do stuff
-}
-
-snapdragon
-  .parser('heading', heading);
-  .parser('heading', heading);
-```
-
-### [.parse](lib/parse.js#L204)
-
-Parse the currently loaded string with the specified parser middleware.
-
-* `returns` **{Object}**: Object representing the parsed AST
-
-**Example**
-
-```js
-var ast = snapdragon.parse();
-```
-
-### [.match](lib/parse.js#L228)
-
-Match `re` and return captures. Advances the position of the parser by the length of the captured string.
-
-**Params**
-
-* `re` **{RegExp}**
-* `returns` **{Object}**: Push an object representing a parsed node onto the AST.
-
-**Example**
-
-```js
-// match a dot
-function dot() {
-  var pos = this.position();
-  var m = this.match(/^\./);
-  if (!m) return;
-  return pos({type: 'dot', val: m[0]});
-}
-```
-
-## Renderer API
-
-### [Renderer](lib/render.js#L19)
-
-Create an instance of `Renderer`. This is only necessary if need to create your own instance.
-
-**Params**
-
-* `ast` **{Object}**: Pass the ast from the `Parse` method
-
-**Example**
-
-```js
-var renderer = new snapdragon.Renderer();
-```
-
-### [.error](lib/render.js#L40)
-
-Set an error message with the current line number and column.
-
-**Params**
-
-* `msg` **{String}**: Message to use in the Error.
-
-**Example**
-
-```js
-this.error('Error parsing string.');
-```
-
-### [.renderer](lib/render.js#L71)
-
-Add a renderer that will be used inside other renderers and middleware.
-
-**Params**
-
-* `name` **{String}**: Name of the renderer to add to the prototype.
-* `fn` **{Function}**: Rule function to add to the prototype.
-* `returns` **{Object}** `this`: to enable chaining.
-
-**Example**
-
-```js
-snapdragon.renderer('foo', function () {
-  //=> do stuff
-});
-```
-
-## Related projects
-
-{%= related([]) %}
+* [ ] getting started
+* [ ] docs for `.use`
+* [ ] docs for `.set`
+* [ ] docs for `nodes` (recursion)
+* [ ] unit tests
 
 ## Running tests
 
@@ -194,3 +121,5 @@ Released under the MIT license.
 ***
 
 _This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on May 10, 2015._
+
+{%= reflinks(['jade', 'css']) %}
