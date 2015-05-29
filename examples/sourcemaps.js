@@ -54,20 +54,6 @@ function parse(str, options) {
 function render(ast, options) {
   options = extend({renderers: renderers, sourcemap: true}, options);
   var renderer = snapdragon.renderer(ast, options);
-
-  // source maps
-  if (options.sourcemap) {
-    var sourcemaps = require('../lib/source-maps');
-    sourcemaps(renderer);
-
-    var code = renderer.render();
-    renderer.applySourceMaps();
-
-    var map = options.sourcemap === 'generator'
-      ? renderer.map
-      : renderer.map.toJSON();
-    return { orig: ast.orig, code: code, map: map };
-  }
   return renderer.render();
 }
 

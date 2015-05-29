@@ -3,27 +3,18 @@
   "description": "snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.",
   "version": "0.1.1",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
-  "author": {
-    "name": "Jon Schlinkert",
-    "url": "https://github.com/jonschlinkert"
-  },
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "collaborators": [
     {
       "name": "Brian Woodward",
       "url": "https://github.com/doowb"
     }
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jonschlinkert/snapdragon.git"
-  },
+  "repository": "jonschlinkert/snapdragon",
   "bugs": {
     "url": "https://github.com/jonschlinkert/snapdragon/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/jonschlinkert/snapdragon/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
@@ -38,7 +29,7 @@
     "chalk": "^1.0.0",
     "export-dirs": "^0.2.4",
     "export-files": "^2.0.1",
-    "extend-shallow": "^1.1.2",
+    "extend-shallow": "^1.1.4",
     "minimist": "^1.1.1",
     "source-map": "^0.4.2",
     "source-map-resolve": "^0.3.1",
