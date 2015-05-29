@@ -56,9 +56,7 @@ function parse(str, options) {
 
 function render(ast, options) {
   options = extend({renderers: renderers, sourcemap: true}, options);
-  var res = snapdragon.renderer(ast, options).render();
-  if (res.patterns.length === 0) res.patterns.push(res.result);
-  return res;
+  return snapdragon.renderer(ast, options).render();
 }
 
 /**
@@ -68,4 +66,4 @@ function render(ast, options) {
 var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
 var ast = parse(str);
 var res = render(ast);
-console.log(res.patterns);
+console.log(res);
