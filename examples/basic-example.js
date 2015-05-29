@@ -34,8 +34,26 @@ function fn(re, type) {
 function parse(str, options) {
   var res = snapdragon.parser(str, options)
     // register middleware as named parsers
-    .set('backslash', fn(/^\\/, 'backslash'))
-    .set('slash', fn(/^\//, 'slash'))
+    // .set('backslash', fn(/^\\/, 'backslash'))
+    // .set('slash', fn(/^\//, 'slash'))
+    .set('backslash', function () {
+      var pos = this.position();
+      var m = this.match(/^\\/);
+      if (!m) return;
+      return pos({
+        type: type,
+        val: m[0]
+      });
+    })
+    .set('slash', function () {
+      var pos = this.position();
+      var m = this.match(/^\//);
+      if (!m) return;
+      return pos({
+        type: type,
+        val: m[0]
+      });
+    })
 
     // push middleware onto the `parsers` stack
     .use(function () {
@@ -49,24 +67,23 @@ function parse(str, options) {
     })
     .use(function () {
       var pos = this.position();
-      var m = this.match(/^\W+/);
-      if (!m) return;
-
-      var backslash = this.backslash();
-      var slash = this.slash();
-
-      return pos({
-        type: 'path',
-        nodes: [backslash, slash].filter(Boolean)
-      })
-    })
-    .use(function () {
-      var pos = this.position();
       var m = this.match(/^[a-z0-9]+/i);
       if (!m) return;
       return pos({
         type: 'text',
         val: m[0]
+      })
+    })
+    .use(function () {
+      var pos = this.position();
+      var m = this.match(/^\W+/);
+      if (!m) return;
+
+      var backslash = this.backslash();
+      var slash = this.slash();
+      return pos({
+        type: 'path',
+        nodes: [backslash, slash].filter(Boolean)
       })
     })
     .parse();
@@ -93,13 +110,13 @@ function render(ast, options) {
     .set('text', function (node) {
       return this.emit(node.val);
     })
-    .set('path', function (node) {
-      var val = node.val || '';
-      if (node.nodes && node.nodes.length) {
-        val += this.mapVisit(node.nodes);
-      }
-      return this.emit(val);
-    })
+    // .set('path', function (node) {
+    //   var val = node.val || '';
+    //   if (node.nodes && node.nodes.length) {
+    //     val += this.mapVisit(node.nodes);
+    //   }
+    //   return this.emit(val);
+    // })
     .render();
 }
 
@@ -108,6 +125,6 @@ function render(ast, options) {
  */
 
 var str ='foo/bar/\\/baz.js';
-var res = parse(str);
-// console.log(res.ast)
-// console.log(render(res.ast));
+var ast = parse(str);
+console.log(ast);
+// console.log(render(ast));
