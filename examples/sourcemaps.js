@@ -9,7 +9,8 @@ var extend = require('extend-shallow');
 var example = require('./app');
 var renderers = example.renderers;
 var parsers = example.parsers;
-var snapdragon = require('../');
+var Snapdragon = require('..');
+var snapdragon = new Snapdragon();
 
 /**
  * Parse
@@ -19,13 +20,15 @@ function parse(str, options) {
   var parser = snapdragon.parser(str, options);
 
   // register parsers
-  parser.set('braceOpen', parsers.braces.open)
+  parser
+    .set('braceOpen', parsers.braces.open)
     .set('braceInner', parsers.braces.inner)
     .set('braceClose', parsers.braces.close)
     .set('invalid', parsers.base.invalid);
 
   // middleware: 'filepath'
-  parser.use(parsers.filepath.backslash)
+  parser
+    .use(parsers.filepath.backslash)
     .use(parsers.filepath.slash)
     .use(parsers.filepath.ext)
 
@@ -53,8 +56,9 @@ function parse(str, options) {
 
 function render(ast, options) {
   options = extend({renderers: renderers, sourcemap: true}, options);
-  var renderer = snapdragon.renderer(ast, options);
-  return renderer.render();
+  var res = snapdragon.renderer(ast, options).render();
+  if (res.patterns.length === 0) res.patterns.push(res.result);
+  return res;
 }
 
 /**
@@ -63,4 +67,5 @@ function render(ast, options) {
 
 var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
 var ast = parse(str);
-console.log(render(ast));
+var res = render(ast);
+console.log(res.patterns);

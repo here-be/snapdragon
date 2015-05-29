@@ -1,7 +1,55 @@
 'use strict';
 
+var extend = require('extend-shallow');
 var Render = require('./lib/render');
 var Parse = require('./lib/parse');
+
+function Snapdragon(str, options) {
+  this.options = options || {};
+  this.input = str;
+  this.transforms = {};
+}
+
+/**
+ * Transforms are used to extend or modify the `this` object
+ * upon initialization.
+ *
+ * @param {String} `name` The name of the transform to add.
+ * @param {Function} `fn` The actual transform function.
+ * @return {Object} Returns `Snapdragon` for chaining.
+ * @api public
+ */
+
+Snapdragon.prototype.transform = function(name, fn) {
+  if (typeof name !== 'string') {
+    throw new TypeError('Snapdragon#transform expects `name` to be a string.');
+  }
+  if (arguments.length === 1) {
+    return this.transforms[name];
+  }
+  if (fn && typeof fn === 'function') {
+    this.transforms[name] = fn;
+    fn.call(this, this);
+  }
+  return this;
+};
+
+/**
+ * Add a method to the `Snapdragon` prototype.
+ *
+ * @param  {string} `name`
+ * @param  {Function} `fn`
+ */
+
+Snapdragon.prototype.mixin = function(name, fn) {
+  if (typeof name !== 'string') {
+    throw new TypeError('Snapdragon#mixin expects `name` to be a string.');
+  }
+  if (name && fn && typeof fn === 'function') {
+    Snapdragon.prototype[name] = fn.bind(this);
+  }
+  return this;
+};
 
 /**
  * Parse the given string into an ast by calling
@@ -13,8 +61,14 @@ var Parse = require('./lib/parse');
  * @api public
  */
 
-exports.parser = function(str, options) {
-  return new Parse(str, options);
+Snapdragon.prototype.parser = function(str, options) {
+  if (str && typeof str === 'object') {
+    options = str;
+    str = null;
+  }
+  var opts = extend({}, this.options, options);
+  this.input = str || this.input;
+  return new Parse(this.input, opts);
 };
 
 /**
@@ -26,18 +80,13 @@ exports.parser = function(str, options) {
  * @api public
  */
 
-exports.renderer = function(ast, options) {
+Snapdragon.prototype.renderer = function(ast, options) {
+  var opts = extend({}, this.options, options);
   return new Render(ast, options);
 };
 
 /**
- * Expose `Parse`
+ * Expose `Snapdragon`
  */
 
-exports.Parse = Parse;
-
-/**
- * Expose `Render`
- */
-
-exports.Render = Render;
+module.exports = Snapdragon;

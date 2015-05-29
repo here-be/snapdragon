@@ -9,7 +9,8 @@ var extend = require('extend-shallow');
 var example = require('./app');
 var renderers = example.renderers;
 var parsers = example.parsers;
-var snapdragon = require('../');
+var Snapdragon = require('..');
+var snapdragon = new Snapdragon();
 
 /**
  * Parse

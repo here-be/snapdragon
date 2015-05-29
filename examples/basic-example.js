@@ -9,7 +9,8 @@
 var extend = require('extend-shallow');
 var example = require('./app');
 var renderers = example.renderers;
-var snapdragon = require('../');
+var Snapdragon = require('..');
+var snapdragon = new Snapdragon();
 
 /**
  * Generic middleware than can be customized
@@ -31,7 +32,7 @@ function fn(re, type) {
 }
 
 function parse(str, options) {
-  return snapdragon.parser(str, options)
+  var res = snapdragon.parser(str, options)
     // register middleware as named parsers
     .set('backslash', fn(/^\\/, 'backslash'))
     .set('slash', fn(/^\//, 'slash'))
@@ -61,7 +62,7 @@ function parse(str, options) {
     })
     .use(function () {
       var pos = this.position();
-      var m = this.match(/^[a-z0-9]/i);
+      var m = this.match(/^[a-z0-9]+/i);
       if (!m) return;
       return pos({
         type: 'text',
@@ -69,6 +70,8 @@ function parse(str, options) {
       })
     })
     .parse();
+
+  return res;
 }
 
 /**
@@ -105,6 +108,6 @@ function render(ast, options) {
  */
 
 var str ='foo/bar/\\/baz.js';
-var ast = parse(str);
-// console.log(ast.nodes)
-console.log(render(ast));
+var res = parse(str);
+// console.log(res.ast)
+// console.log(render(res.ast));
