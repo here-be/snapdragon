@@ -10,7 +10,7 @@
 /* deps: mocha */
 var assert = require('assert');
 var should = require('should');
-var snapdragon = require('./');
+var snapdragon = require('../');
 
 describe('snapdragon', function () {
   it('should:', function () {
