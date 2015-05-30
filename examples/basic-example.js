@@ -15,7 +15,7 @@ var snapdragon = new Snapdragon();
 
 
 function parse(str, options) {
-  var res = snapdragon.parser(str, options)
+  var res = snapdragon.parse(str, options)
     .use(parsers.base.base(/^[a-z0-9]+/i, 'text'))
     .use(parsers.base.base(/^\\/, 'backslash'))
     .use(parsers.base.base(/^\//, 'slash'))
@@ -29,7 +29,7 @@ function parse(str, options) {
 
 function render(ast, options) {
   options = extend({ renderers: renderers }, options);
-  return snapdragon.renderer(ast, options)
+  return snapdragon.render(ast, options)
     .set('backslash', function (node) {
       return this.emit(node.val);
     })
