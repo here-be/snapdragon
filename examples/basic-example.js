@@ -9,86 +9,18 @@
 var extend = require('extend-shallow');
 var example = require('./app');
 var renderers = example.renderers;
+var parsers = example.parsers;
 var Snapdragon = require('..');
 var snapdragon = new Snapdragon();
 
-/**
- * Generic middleware than can be customized
- * and reused
- */
-
-function fn(re, type) {
-  return function () {
-    var pos = this.position();
-    var m = this.match(re);
-    if (!m) return;
-
-    // return token, with value and type
-    return pos({
-      type: type,
-      val: m[0]
-    });
-  };
-}
 
 function parse(str, options) {
   var res = snapdragon.parser(str, options)
-    // register middleware as named parsers
-    // .set('backslash', fn(/^\\/, 'backslash'))
-    // .set('slash', fn(/^\//, 'slash'))
-    .set('backslash', function () {
-      var pos = this.position();
-      var m = this.match(/^\\/);
-      if (!m) return;
-      return pos({
-        type: type,
-        val: m[0]
-      });
-    })
-    .set('slash', function () {
-      var pos = this.position();
-      var m = this.match(/^\//);
-      if (!m) return;
-      return pos({
-        type: type,
-        val: m[0]
-      });
-    })
-
-    // push middleware onto the `parsers` stack
-    .use(function () {
-      var pos = this.position();
-      var m = this.match(/^\./);
-      if (!m) return;
-      return pos({
-        type: 'dot',
-        val: m[0]
-      })
-    })
-    .use(function () {
-      var pos = this.position();
-      var m = this.match(/^[a-z0-9]+/i);
-      if (!m) return;
-      return pos({
-        type: 'text',
-        val: m[0]
-      })
-    })
-    .use(function () {
-      var pos = this.position();
-      var m = this.match(/^\W+/);
-      if (!m) return;
-
-      var backslash = this.backslash();
-      var slash = this.slash();
-      return pos({
-        type: 'path',
-        nodes: [backslash, slash].filter(Boolean)
-      })
-    })
-    .parse();
-
-  return res;
+    .use(parsers.base.base(/^[a-z0-9]+/i, 'text'))
+    .use(parsers.base.base(/^\\/, 'backslash'))
+    .use(parsers.base.base(/^\//, 'slash'))
+    .use(parsers.base.base(/^\./, 'dot'))
+  return res.parse();
 }
 
 /**
@@ -102,21 +34,20 @@ function render(ast, options) {
       return this.emit(node.val);
     })
     .set('slash', function (node) {
-      return this.emit(node.val);
+      var prev = this.ast.nodes[node.i - 1];
+      var prefix = !/[\\\/]/.test(prev.val) ? '\\' : '';
+      return this.emit(prefix + node.val);
     })
     .set('dot', function (node) {
       return this.emit(node.val);
     })
     .set('text', function (node) {
+      var prev = this.ast.nodes[node.i - 1];
+      if (prev && prev.val === '.' && node.val === 'coffee') {
+        return this.emit('js');
+      }
       return this.emit(node.val);
     })
-    // .set('path', function (node) {
-    //   var val = node.val || '';
-    //   if (node.nodes && node.nodes.length) {
-    //     val += this.mapVisit(node.nodes);
-    //   }
-    //   return this.emit(val);
-    // })
     .render();
 }
 
@@ -124,7 +55,8 @@ function render(ast, options) {
  * All together
  */
 
-var str ='foo/bar/\\/baz.js';
+var str ='foo/bar/\\/baz.coffee';
 var ast = parse(str);
-console.log(ast);
-// console.log(render(ast));
+var res = render(ast);
+console.log(res);
+//=> 'foo\\/bar\\/\\/baz.js'
