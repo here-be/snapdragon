@@ -10,17 +10,13 @@
 /* deps: mocha */
 var assert = require('assert');
 var should = require('should');
-var snapdragon = require('../');
+var Snapdragon = require('..');
+var snapdragon = new Snapdragon();
 
 describe('snapdragon', function () {
-  it('should:', function () {
-    snapdragon('a').should.eql({a: 'b'});
-    snapdragon('a').should.equal('a');
-  });
-
-  it('should throw an error:', function () {
+  it('should throw an error when invalid args are passed:', function () {
     (function () {
-      snapdragon();
-    }).should.throw('snapdragon expects valid arguments');
+      snapdragon.parse();
+    }).should.throw('Snapdragon#parse expects a string');
   });
 });
