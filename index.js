@@ -61,13 +61,16 @@ Snapdragon.prototype.mixin = function(name, fn) {
  * @api public
  */
 
-Snapdragon.prototype.parser = function(str, options) {
+Snapdragon.prototype.parse = function(str, options) {
   if (str && typeof str === 'object') {
     options = str;
     str = null;
   }
   var opts = extend({}, this.options, options);
   this.input = str || this.input;
+  if (typeof this.input === 'undefined') {
+    throw new TypeError('Snapdragon#parse expects a string');
+  }
   return new Parse(this.input, opts);
 };
 
@@ -80,7 +83,7 @@ Snapdragon.prototype.parser = function(str, options) {
  * @api public
  */
 
-Snapdragon.prototype.renderer = function(ast, options) {
+Snapdragon.prototype.render = function(ast, options) {
   var opts = extend({}, this.options, options);
   return new Render(ast, options);
 };
@@ -90,3 +93,15 @@ Snapdragon.prototype.renderer = function(ast, options) {
  */
 
 module.exports = Snapdragon;
+
+/**
+ * Expose `Parse`
+ */
+
+module.exports.Parser = Parse;
+
+/**
+ * Expose `Render`
+ */
+
+module.exports.Renderer = Render;
