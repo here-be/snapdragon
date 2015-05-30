@@ -1,4 +1,4 @@
-# snapdragon [![NPM version](https://badge.fury.io/js/snapdragon.svg)](http://badge.fury.io/js/snapdragon)
+# snapdragon [![NPM version](https://badge.fury.io/js/snapdragon.svg)](http://badge.fury.io/js/snapdragon)  [![Build Status](https://travis-ci.org/jonschlinkert/snapdragon.svg)](https://travis-ci.org/jonschlinkert/snapdragon)
 
 > snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.
 
@@ -14,34 +14,51 @@ Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https:/
 
 Install with [npm](https://www.npmjs.com/)
 
-```bash
-npm i snapdragon --save
+```sh
+$ npm i snapdragon --save
 ```
 
 ## Usage examples
 
 ```js
-var snapdragon = require('snapdragon');
+var Snapdragon = require('snapdragon');
+var snapdragon = new Snapdragon();
+```
 
-// custom parser middleware
-var ast = snapdragon.parser('some string')
-  .use(foo())
-  .use(bar())
-  .parse();
+**Parse**
 
-var res = snapdragon.renderer(ast);
+```js
+var ast = snapdragon.parser('some string', options)
+  // parser middleware that can be called by other middleware
   .set('foo', function () {})
+  // parser middleware that will be run immediately, in the order defined
+  .use(bar())
+  .use(baz())
+```
+
+**Render**
+
+```js
+// pass the `ast` from the parse method
+var res = snapdragon.renderer(ast)
+  // renderer middleware, called when the name of the middleware
+  // matches the `node.type` (defined in a parser middleware)
   .set('bar', function () {})
+  .set('baz', function () {})
   .render()
 ```
 
 See the [examples](./examples/)
 
 * [basic](./examples/basic-example.js)
-* [filepath](./examples/filepath-example.js)
-* [sourcemaps](./examples/sourcemaps.js)
+* [glob](./examples/glob-example.js)
+* [sourcemaps](./examples/sourcemap-example.js)
 
-Try running all three examples from the command line. Just do `node examples/sourcemaps.js` etc.
+Try running all three examples from the command line. Just do:
+
+* `node examples/basic-example.js`
+* `node examples/glob-example.js`
+* `node examples/sourcemap-example.js`
 
 ## Getting started
 
@@ -65,7 +82,7 @@ var ast = snapdragon.parser(str, options)
 
 **AST node**
 
-When the parser finds a match, `pos()` is called, pushing a node onto the ast that looks something like:
+When the parser finds a match, `pos()` is called, pushing a token for that node onto the ast that looks something like:
 
 ```js
 { type: 'dot',
@@ -77,7 +94,7 @@ When the parser finds a match, `pos()` is called, pushing a node onto the ast th
 
 **Renderers**
 
-Renderers are middleware functions that visit over an array of ast nodes to render a string.
+Renderers are _named_ middleware functions that visit over an array of ast nodes to render a string.
 
 ```js
 var res = snapdragon.renderer(ast)
@@ -88,15 +105,243 @@ var res = snapdragon.renderer(ast)
   })
 ```
 
-_(TBC)_
+**Source maps**
+
+If you want source map support, make sure to emit the position as well.
+
+```js
+var res = snapdragon.renderer(ast)
+  .set('dot', function (node) {
+    return this.emit(node.val, node.position);
+  })
+```
+
+## Docs
+
+### Parser middleware
+
+A parser middleware is a function that returns an abject called a `token`. This token is pushed onto the AST as a node.
+
+**Example token**
+
+```js
+{ type: 'dot',
+  val: '.',
+  position:
+   { start: { line: 1, column: 1 },
+     end: { line: 1, column: 2 } }
+```
+
+**Example parser middleware**
+
+Match a single `.` in a string:
+
+1. Get the starting position by calling `this.position()`
+2. pass a regex for matching a single dot to the `.match` method
+3. if **no match** is found, return `undefined`
+4. if a **match** is found, `pos()` is called, which returns a token with:
+  - `type`: the name of the [renderer] to use
+  - `val`: The actual value captured by the regex. In this case, a `.`. Note that you can capture and return whatever will be needed by the corresponding [renderer].
+  - The ending position: automatically calculated by adding the length of the first capture group to the starting position.
+
+## Renderer middleware
+
+Renderers are run when the name of the renderer middleware matches the `type` defined on an ast `node` (which is defined in a parser).
+
+**Example**
+
+Exercise: Parse a dot, then render it as an escaped dot.
+
+```js
+var ast = snapdragon.parser('.')
+  .use(function () {
+    var pos = this.position();
+    var m = this.match(/^\./);
+    if (!m) return;
+    return pos({
+      // define the `type` of renderer to use
+      type: 'dot',
+      val: m[0]
+    })
+  })
+
+var result = snapdragon.renderer(ast)
+  .set('dot', function (node) {
+    return this.emit('\\' + node.val);
+  })
+  .render()
+
+//=> '\.'
+```
+
+## API
+
+### Parse
+
+### [.updatePosition](lib/parse.js#L66)
+
+Update this.lineno and this.column based on `str`.
+
+**Params**
+
+* `str` **{String}**: Parsed out string used to determine updated line number and position.
+
+**Example**
+
+```js
+this.updatePosition('foo');
+```
+
+### [.position](lib/parse.js#L85)
+
+Mark position and update `node.position`.
+
+* `returns` **{Function}**: Function used to update the position when finished.
+
+**Example**
+
+```js
+var pos = this.position();
+var node = pos({type: 'dot'});
+```
+
+### [.error](lib/parse.js#L115)
+
+Set an error message with the current line number and column.
+
+**Params**
+
+* `msg` **{String}**: Message to use in the Error.
+
+**Example**
+
+```js
+this.error('Error parsing string.');
+```
+
+### [.set](lib/parse.js#L161)
+
+Register a parser middleware by name, so it can be called by other parsers. Parsers are added to the `prototype` to allow using `this`.
+
+**Params**
+
+* `name` **{String}**: Name of the parser to add to the prototype.
+* `fn` **{Function}**: Rule function to add to the prototype.
+* `returns` **{Object}** `this`: to enable chaining.
+
+**Example**
+
+```js
+function heading() {
+  //=> do stuff
+}
+function heading() {
+  //=> do stuff
+}
+
+var ast = snapdragon.parser(str, options)
+  .set('slash', function(){})
+  .set('backslash', function(){})
+  .parse();
+```
+
+### [.parse](lib/parse.js#L197)
+
+Parse the currently loaded string with the specified parser middleware.
+
+* `returns` **{Object}**: Object representing the parsed AST
+
+**Example**
+
+```js
+var ast = snapdragon.parse();
+```
+
+### [.match](lib/parse.js#L239)
+
+Match `re` and return captures. Advances the position of the parser by the length of the captured string.
+
+**Params**
+
+* `re` **{RegExp}**
+* `returns` **{Object}**: Push an object representing a parsed node onto the AST.
+
+**Example**
+
+```js
+// match a dot
+function dot() {
+  var pos = this.position();
+  var m = this.match(/^\./);
+  if (!m) return;
+  return pos({type: 'dot', val: m[0]});
+}
+```
+
+### Render
+
+### [Renderer](lib/render.js#L19)
+
+Create an instance of `Renderer`. This is only necessary if need to create your own instance.
+
+**Params**
+
+* `ast` **{Object}**: Pass the ast generated by `snapdragon.parse()`
+* `options` **{Object}**
+
+**Example**
+
+```js
+var renderer = new snapdragon.Renderer();
+```
+
+### [.error](lib/render.js#L46)
+
+Set an error message with the current line number and column.
+
+**Params**
+
+* `message` **{String}**: Message to use in the Error.
+
+**Example**
+
+```js
+this.error('Error parsing string.');
+```
+
+### [.set](lib/render.js#L87)
+
+Register a renderer for a corresponding parser `type`.
+
+**Params**
+
+* `name` **{String}**: Name of the renderer to register
+* `fn` **{Function}**: Function to register
+* `returns` **{Object}** `this`: for chaining.
+
+**Example**
+
+```js
+var ast = snapdragon.parse(str)
+  .use(function() {
+    // `type` is the name of the renderer to use
+    return pos({ type: 'dot' });
+  })
+
+var res = snapdragon.render(ast, options)
+  .set('dot', function (node) {
+    return this.emit(node.val);
+  })
+```
 
 ## TODO
 
-* [ ] getting started
+* [x] getting started
 * [ ] docs for `.use`
 * [ ] docs for `.set`
-* [ ] docs for `nodes` (recursion)
+* [ ] docs for child `nodes` (recursion)
 * [ ] unit tests
+* [ ] benchmarks
 
 ## Related projects
 
@@ -109,8 +354,8 @@ Snapdragon was inspired by these great projects by [tj](https://github.com/tj):
 
 Install dev dependencies:
 
-```bash
-npm i -d && npm test
+```sh
+$ npm i -d && npm test
 ```
 
 ## Contributing
@@ -131,9 +376,9 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 ## License
 
-Copyright (c) 2015 Jon Schlinkert
+Copyright © 2015 Jon Schlinkert
 Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on May 11, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on May 29, 2015._
