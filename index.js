@@ -46,7 +46,7 @@ Snapdragon.prototype.mixin = function(name, fn) {
     throw new TypeError('Snapdragon#mixin expects `name` to be a string.');
   }
   if (name && fn && typeof fn === 'function') {
-    Snapdragon.prototype[name] = fn.bind(this);
+    Snapdragon.prototype[name] = fn;
   }
   return this;
 };
@@ -61,7 +61,7 @@ Snapdragon.prototype.mixin = function(name, fn) {
  * @api public
  */
 
-Snapdragon.prototype.parse = function(str, options) {
+Snapdragon.prototype.parser = function(str, options) {
   if (str && typeof str === 'object') {
     options = str;
     str = null;
@@ -83,7 +83,7 @@ Snapdragon.prototype.parse = function(str, options) {
  * @api public
  */
 
-Snapdragon.prototype.render = function(ast, options) {
+Snapdragon.prototype.renderer = function(ast, options) {
   var opts = extend({}, this.options, options);
   return new Render(ast, options);
 };

@@ -3,7 +3,7 @@
 module.exports = dot;
 
 /**
- * Dot: '/'
+ * Render a dot: '/'
  */
 
 function dot(node) {

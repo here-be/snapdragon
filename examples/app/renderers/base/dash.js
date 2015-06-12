@@ -3,7 +3,7 @@
 module.exports = dash;
 
 /**
- *  Dash: '-'
+ *  Render a dash: '-'
  */
 
 function dash(node) {

@@ -17,7 +17,7 @@ var snapdragon = new Snapdragon();
  */
 
 function parse(str, options) {
-  var parser = snapdragon.parse(str, options);
+  var parser = snapdragon.parser(str, options);
 
   // register parsers
   parser.set('braceOpen', parsers.braces.open)
@@ -54,7 +54,7 @@ function parse(str, options) {
 
 function render(ast, options) {
   options = extend({renderers: renderers, sourcemap: true}, options);
-  return snapdragon.render(ast, options).render();
+  return snapdragon.renderer(ast, options).render();
 }
 
 /**

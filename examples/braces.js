@@ -63,7 +63,7 @@ function render(ast, options) {
  * All together
  */
 
-var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
+var str ='foo/{a,b,c,{d,e,{f,g}}}/bar/{x,y}/baz';
 var ast = parse(str);
 var res = render(ast);
 console.log(res);
