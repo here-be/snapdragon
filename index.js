@@ -4,6 +4,14 @@ var extend = require('extend-shallow');
 var Render = require('./lib/render');
 var Parse = require('./lib/parse');
 
+/**
+ * Initialize `Snapdragon` with the given `string` and `options`.
+ *
+ * @param {String} `str`
+ * @param {Object} `options`
+ * @api public
+ */
+
 function Snapdragon(str, options) {
   this.options = options || {};
   this.input = str;
@@ -95,13 +103,8 @@ Snapdragon.prototype.renderer = function(ast, options) {
 module.exports = Snapdragon;
 
 /**
- * Expose `Parse`
+ * Expose `Parse` and `Render`
  */
 
 module.exports.Parser = Parse;
-
-/**
- * Expose `Render`
- */
-
 module.exports.Renderer = Render;
