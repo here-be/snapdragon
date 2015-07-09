@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = braces;
+module.exports = nodes;
 
 /**
  * Braces:
@@ -9,21 +9,15 @@ module.exports = braces;
  *  | {1..10..2}
  */
 
-function braces() {
+function nodes() {
   var pos = this.position();
-  var open = this.braceOpen();
-  if (!open) return;
-
-  var inner = this.braceInner();
-  var close = this.braceClose();
-  var result = pos({
-    type: 'braces.nodes',
-    nodes: [open, inner, close]
-  });
-
-  if (!close) {
-    if (this.strict) return this.error('missing closing brace: "}"');
-    this.errorsList.push(result);
+  var nodes = [], node;
+  while (node = this.braceBraces()) {
+    nodes.push(node);
   }
-  return result;
+  if (!nodes.length) return;
+  return pos({
+    type: 'braces.nodes',
+    nodes: nodes
+  });
 }

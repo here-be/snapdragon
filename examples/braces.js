@@ -11,6 +11,7 @@ var renderers = example.renderers;
 var parsers = example.parsers;
 var Snapdragon = require('..');
 var snapdragon = new Snapdragon();
+var cache = {};
 
 /**
  * Parse
@@ -24,6 +25,7 @@ function parse(str, options) {
     .set('braceOpen', parsers.braces.open)
     .set('braceInner', parsers.braces.inner)
     .set('braceClose', parsers.braces.close)
+    .set('braceBraces', parsers.braces.braces)
     .set('invalid', parsers.base.invalid);
 
   // middleware: 'filepath'
@@ -33,6 +35,7 @@ function parse(str, options) {
     .use(parsers.filepath.ext)
 
     // middleware: 'base'
+    .use(parsers.base.space)
     .use(parsers.base.dot)
     .use(parsers.base.escape)
     .use(parsers.base.comma)
@@ -63,7 +66,19 @@ function render(ast, options) {
  * All together
  */
 
-var str ='foo/{a,b,c,{d,e,{f,g}}}/bar/{x,y}/baz';
-var ast = parse(str);
-var res = render(ast);
-console.log(res);
+function braces(str) {
+  if (cache.hasOwnProperty(str)) {
+    return cache[str];
+  }
+  var ast = parse(str);
+  console.log(ast.nodes)
+  var res = render(ast);
+  return (cache[str] = [res.result]);
+}
+
+// var str ='foo/{a,b,c,{d,e,{f,g}}}/bar/{x,y}/baz';
+var str ='foo {a,b} baz';
+console.log(braces(str));
+
+
+module.exports = braces;

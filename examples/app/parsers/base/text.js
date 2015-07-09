@@ -8,7 +8,7 @@ module.exports = text;
 
 function text() {
   var pos = this.position();
-  var m = this.match(/^[\s\w]+/);
+  var m = this.match(/^[a-z]+/i);
   if (!m) return;
 
   return pos({

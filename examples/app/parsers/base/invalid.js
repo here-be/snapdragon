@@ -8,7 +8,7 @@
  */
 
 module.exports = function(opts) {
-  opts = opts || { re: /^$/ };
+  opts = opts || { re: /$^/ };
 
   return function invalid() {
     var pos = this.position();

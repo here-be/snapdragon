@@ -13,7 +13,7 @@ function inner() {
   if (!m) return;
 
   var res = { type: 'braces.inner' };
-  res.val = m[0].split(',');
+  res.val = m[0].split(',').filter(Boolean);
 
   res.head = parsed.slice(0, parsed.length - 1);
   res.tail = this.input.slice(1);
