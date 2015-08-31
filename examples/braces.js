@@ -6,12 +6,16 @@
  */
 
 var extend = require('extend-shallow');
-var example = require('./app');
-var renderers = example.renderers;
-var parsers = example.parsers;
-var Snapdragon = require('..');
-var snapdragon = new Snapdragon();
+var snapdragon = require('..')();
 var cache = {};
+
+/**
+ * Custom parsers/renderers
+ */
+
+var app = require('./app');
+var renderers = app.renderers;
+var parsers = app.parsers;
 
 /**
  * Parse
@@ -76,8 +80,8 @@ function braces(str) {
   return (cache[str] = [res.result]);
 }
 
-// var str ='foo/{a,b,c,{d,e,{f,g}}}/bar/{x,y}/baz';
-var str ='foo {a,b} baz';
+var str ='foo/{a,b,c,{d,e,{f,g}}}/bar/{x,y}/baz';
+// var str ='foo {a,b} baz';
 console.log(braces(str));
 
 
