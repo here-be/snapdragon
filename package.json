@@ -1,7 +1,7 @@
 {
   "name": "snapdragon",
   "description": "snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "collaborators": [
@@ -26,7 +26,9 @@
     "test": "mocha"
   },
   "dependencies": {
-    "chalk": "^1.0.0",
+    "ansi-cyan": "^0.1.1",
+    "ansi-yellow": "^0.1.1",
+    "define-property": "^0.2.5",
     "export-dirs": "^0.2.4",
     "export-files": "^2.0.1",
     "extend-shallow": "^1.1.4",
@@ -36,6 +38,9 @@
     "urix": "^0.1.0"
   },
   "devDependencies": {
+    "ansi-bold": "^0.1.1",
+    "benchmarked": "^0.1.4",
+    "braces": "^1.8.1",
     "mocha": "*",
     "should": "*"
   },
