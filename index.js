@@ -53,7 +53,7 @@ Snapdragon.prototype = {
 
   renderer: function(ast, options) {
     var opts = extend({}, this.options, options);
-    return new Renderer(ast, options);
+    return new Renderer(ast, opts);
   }
 };
 
