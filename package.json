@@ -5,10 +5,7 @@
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "collaborators": [
-    {
-      "name": "Brian Woodward",
-      "url": "https://github.com/doowb"
-    }
+    "Brian Woodward (https://github.com/doowb)"
   ],
   "repository": "jonschlinkert/snapdragon",
   "bugs": {
@@ -16,7 +13,8 @@
   },
   "license": "MIT",
   "files": [
-    "index.js"
+    "index.js",
+    "lib/"
   ],
   "main": "index.js",
   "engines": {
@@ -30,18 +28,15 @@
     "ansi-yellow": "^0.1.1",
     "define-property": "^0.2.5",
     "export-dirs": "^0.2.4",
-    "export-files": "^2.0.1",
-    "extend-shallow": "^1.1.4",
-    "minimist": "^1.1.1",
-    "set-value": "^0.2.0",
-    "source-map": "^0.4.2",
-    "source-map-resolve": "^0.3.1",
+    "export-files": "^2.1.0",
+    "extend-shallow": "^2.0.1",
+    "minimist": "^1.2.0",
+    "set-value": "^0.3.1",
+    "source-map": "^0.5.3",
+    "source-map-resolve": "^0.4.0",
     "urix": "^0.1.0"
   },
   "devDependencies": {
-    "ansi-bold": "^0.1.1",
-    "benchmarked": "^0.1.4",
-    "braces": "^1.8.1",
     "gulp": "^3.9.0",
     "gulp-istanbul": "^0.10.0",
     "gulp-jshint": "^1.11.2",
@@ -65,5 +60,17 @@
     "render",
     "renderer",
     "stringify"
-  ]
+  ],
+  "verb": {
+    "related": {
+      "list": [
+        "jade",
+        "css"
+      ]
+    },
+    "reflinks": [
+      "jade",
+      "css"
+    ]
+  }
 }
