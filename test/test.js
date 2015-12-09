@@ -1,8 +1,8 @@
 'use strict';
 
-/* deps: mocha */
+require('mocha');
+require('should');
 var assert = require('assert');
-var should = require('should');
 var Snapdragon = require('../');
 var snapdragon;
 

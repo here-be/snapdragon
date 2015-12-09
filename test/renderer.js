@@ -1,8 +1,8 @@
 'use strict';
 
-/* deps: mocha */
+require('mocha');
+require('should');
 var assert = require('assert');
-var should = require('should');
 var Renderer = require('../lib/renderer');
 var renderer;
 
@@ -19,24 +19,21 @@ describe('renderer', function () {
     });
   });
 
+  // ensures that we catch and document API changes
   describe('prototype methods:', function () {
-    it('should expose the `.error()` method', function() {
-      assert(typeof renderer.error === 'function');
-    });
-    it('should expose the `.set()` method', function() {
-      assert(typeof renderer.set === 'function');
-    });
-    it('should expose the `.emit()` method', function() {
-      assert(typeof renderer.emit === 'function');
-    });
-    it('should expose the `.visit()` method', function() {
-      assert(typeof renderer.visit === 'function');
-    });
-    it('should expose the `.mapVisit()` method', function() {
-      assert(typeof renderer.mapVisit === 'function');
-    });
-    it('should expose the `.render()` method', function() {
-      assert(typeof renderer.render === 'function');
+    var methods = [
+      'error',
+      'set',
+      'emit',
+      'visit',
+      'mapVisit',
+      'render'
+    ];
+
+    methods.forEach(function (method) {
+      it('should expose the `' + method + '` method', function() {
+        assert(typeof renderer[method] === 'function');
+      });
     });
   });
 });
