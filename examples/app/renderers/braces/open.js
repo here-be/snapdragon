@@ -6,6 +6,7 @@ module.exports = open;
  * Open brace.
  */
 
-function open(node) {
-  return this.emit('(', node.position);
+function open(node, prev, next) {
+  var ch = (next && next.val.length > 1) ? '(?:' : '';
+  return this.emit(ch, node.position);
 }

@@ -8,7 +8,7 @@ module.exports = close;
 
 function close() {
   var pos = this.position();
-  var m = this.match(/^(?!\\)}/);
+  var m = this.match(/^(?!\\)}+/);
   if (!m) return;
 
   return pos({

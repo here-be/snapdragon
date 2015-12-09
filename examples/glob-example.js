@@ -68,5 +68,5 @@ function render(ast, options) {
 
 var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
 var ast = parse(str);
-console.log(ast.nodes[0])
+// console.log(ast.nodes[0])
 console.log(render(ast));

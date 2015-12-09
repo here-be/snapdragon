@@ -29,6 +29,7 @@ function parse(str, options) {
     .set('braceOpen', parsers.braces.open)
     .set('braceInner', parsers.braces.inner)
     .set('braceClose', parsers.braces.close)
+    .set('braceBraces', parsers.braces.braces)
     .set('invalid', parsers.base.invalid);
 
   // middleware: 'filepath'
@@ -68,7 +69,8 @@ function render(ast, options) {
  * All together
  */
 
-var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
+// var str ='foo/{a,b,c}/bar/\\{xyz}/baz.js';
+var str ='foo/{a,b,c}/bar/{xyz}/baz.js';
 var ast = parse(str);
 var res = render(ast);
-console.log(res);
+console.log(res.result);

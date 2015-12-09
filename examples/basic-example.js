@@ -42,6 +42,9 @@ function render(ast, options) {
     })
     .set('slash', function (node) {
       var prev = this.ast.nodes[node.i - 1];
+      if (!prev) {
+        return '/';
+      }
       var prefix = !/[\\\/]/.test(prev.val) ? '\\' : '';
       return this.emit(prefix + node.val);
     })
