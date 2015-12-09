@@ -6,7 +6,7 @@ var assert = require('assert');
 var Renderer = require('../lib/renderer');
 var renderer;
 
-var fixture = {source: '', nodes: [], errorsList: []};
+var fixture = {source: '', nodes: [], errors: []};
 
 describe('renderer', function () {
   beforeEach(function() {

@@ -33,13 +33,8 @@ Snapdragon.prototype = {
    * @api public
    */
 
-  parser: function(str, options) {
-    if (typeof str !== 'string') {
-      options = str;
-      str = this.input;
-    }
-    var opts = extend({}, this.options, options);
-    return new Parser(str, opts);
+  parser: function(options) {
+    return new Parser(options);
   },
 
   /**

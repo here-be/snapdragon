@@ -21,12 +21,12 @@ var parsers = app.parsers;
 
 function parse(str, options) {
   var inst = snapdragon(options);
-  var res = inst.parser(str, options)
+  var res = inst.parser(options)
     .use(parsers.base.base(/^[a-z0-9]+/i, 'text'))
     .use(parsers.base.base(/^\\/, 'backslash'))
     .use(parsers.base.base(/^\//, 'slash'))
     .use(parsers.base.base(/^\./, 'dot'))
-  return res.parse();
+  return res.parse(str);
 }
 
 /**

@@ -22,7 +22,7 @@ var parsers = app.parsers;
  */
 
 function parse(str, options) {
-  var parser = snapdragon.parser(str, options);
+  var parser = snapdragon.parser(options);
 
   // register parsers
   parser.set('braceOpen', parsers.braces.open)
@@ -50,7 +50,7 @@ function parse(str, options) {
       delim: '\\}'
     }));
 
-  return parser.parse();
+  return parser.parse(str);
 }
 
 /**
