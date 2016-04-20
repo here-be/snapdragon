@@ -66,22 +66,22 @@ var parser = new Parser()
 
 var renderer = new Renderer()
   .set('escaped', function(node)  {
-    return this.emit('\\' + node.val, node.pos);
+    return this.emit('\\' + node.val, node.position);
   })
   .set('brace.open', function(node)  {
-    return this.emit('(?:', node.pos);
+    return this.emit('(?:', node.position);
   })
   .set('brace.close', function(node)  {
-    return this.emit(')', node.pos);
+    return this.emit(')', node.position);
   })
   .set('comma', function(node)  {
-    return this.emit('|', node.pos);
+    return this.emit('|', node.position);
   })
   .set('text', function(node)  {
-    return this.emit(node.val, node.pos);
+    return this.emit(node.val, node.position);
   })
   .set('slash', function(node)  {
-    return this.emit('/', node.pos);
+    return this.emit('/', node.position);
   });
 
 var ast = parser.parse('a/\\{{b,c,d}/e');
