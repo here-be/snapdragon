@@ -1,6 +1,14 @@
-# snapdragon [![NPM version](https://badge.fury.io/js/snapdragon.svg)](http://badge.fury.io/js/snapdragon)  [![Build Status](https://travis-ci.org/jonschlinkert/snapdragon.svg)](https://travis-ci.org/jonschlinkert/snapdragon)
+# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon.svg?style=flat)](https://travis-ci.org/jonschlinkert/snapdragon)
 
 > snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.
+
+## Install
+
+Install with [npm](https://www.npmjs.com/):
+
+```sh
+$ npm install snapdragon --save
+```
 
 Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https://github.com/doowb).
 
@@ -8,14 +16,14 @@ Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https:/
 
 * Bootstrap your own parser, get sourcemap support for free
 * All parsing and rendering is handled by simple, reusable middleware functions
-* Inspired by the parsers in [Jade](http://jade-lang.com) and [CSS](https://github.com/reworkcss/css).
+* Inspired by the parsers in [pug](http://pug-lang.com) and the [css](https://github.com/reworkcss/css) lib.
 
 ## Install
 
-Install with [npm](https://www.npmjs.com/)
+Install with [npm](https://www.npmjs.com/):
 
 ```sh
-$ npm i snapdragon --save
+$ npm install snapdragon --save
 ```
 
 ## Usage examples
@@ -31,7 +39,7 @@ var snapdragon = new Snapdragon();
 var ast = snapdragon.parser('some string', options)
   // parser middleware that can be called by other middleware
   .set('foo', function () {})
-  // parser middleware that will be run immediately, in the order defined
+  // parser middleware, runs immediately in the order defined
   .use(bar())
   .use(baz())
 ```
@@ -48,17 +56,7 @@ var res = snapdragon.renderer(ast)
   .render()
 ```
 
-See the [examples](./examples/)
-
-* [basic](./examples/basic-example.js)
-* [glob](./examples/glob-example.js)
-* [sourcemaps](./examples/sourcemap-example.js)
-
-Try running all three examples from the command line. Just do:
-
-* `node examples/basic-example.js`
-* `node examples/glob-example.js`
-* `node examples/sourcemap-example.js`
+See the [examples](./examples/).
 
 ## Getting started
 
@@ -89,7 +87,7 @@ When the parser finds a match, `pos()` is called, pushing a token for that node 
   val: '.',
   position:
    { start: { line: 1, column: 1 },
-     end: { line: 1, column: 2 } }
+     end: { line: 1, column: 2 } }}
 ```
 
 **Renderers**
@@ -129,7 +127,7 @@ A parser middleware is a function that returns an abject called a `token`. This 
   val: '.',
   position:
    { start: { line: 1, column: 1 },
-     end: { line: 1, column: 2 } }
+     end: { line: 1, column: 2 } }}
 ```
 
 **Example parser middleware**
@@ -176,52 +174,22 @@ var result = snapdragon.renderer(ast)
 
 ## API
 
-### Parse
+### [Parser](lib/parser.js#L18)
 
-### [.position](lib/parser.js#L99)
-
-Mark position and update `node.position`.
-
-* `returns` **{Function}**: Function used to update the position when finished.
-
-**Example**
-
-```js
-var pos = this.position();
-var node = pos({type: 'dot'});
-```
-
-### [.hint](lib/parser.js#L123)
-
-Set a `hint` to be used by downstream parsers.
+Create a new `Parser` with the given `options`.
 
 **Params**
 
-* `prop` **{String}**
-* `val` **{any}**
-* `returns` **{Object}**: Returns the `Parser` instance for chaining.
+* `options` **{Object}**
 
 **Example**
 
 ```js
-this.hint('bracket.start', true);
+var parser = new Parser();
+parser.parse('foo');
 ```
 
-### [.error](lib/parser.js#L140)
-
-Set an error message with the current line number and column.
-
-**Params**
-
-* `msg` **{String}**: Message to use in the Error.
-
-**Example**
-
-```js
-this.error('Error parsing string.');
-```
-
-### [.set](lib/parser.js#L186)
+### [.set](lib/parser.js#L65)
 
 Register a parser middleware by name, so it can be called by other parsers. Parsers are added to the `prototype` to allow using `this`.
 
@@ -242,24 +210,57 @@ function heading() {
 }
 
 var ast = snapdragon.parser(str, options)
-  .set('slash', function(){})
-  .set('backslash', function(){})
+  .set('slash', function() {})
+  .set('backslash', function() {})
   .parse();
 ```
 
-### [.parse](lib/parser.js#L221)
+### [.get](lib/parser.js#L87)
 
-Parse the currently loaded string with the specified parser middleware.
+Get a cached parser by `name`
 
-* `returns` **{Object}**: Object representing the parsed AST
+**Params**
+
+* `name` **{String}**
+* `returns` **{Function}**: Parser function
 
 **Example**
 
 ```js
-var ast = snapdragon.parse();
+var braceOpen = parser.get('brace.open');
 ```
 
-### [.match](lib/parser.js#L262)
+### [.use](lib/parser.js#L106)
+
+Add a middleware to use for parsing the string resulting in a single node on the AST
+
+**Params**
+
+* `fn` **{Function}**: Middleware function to use.
+* `returns` **{Object}** `this`: to enable chaining
+
+**Example**
+
+```js
+parser
+  .use(function() { ... })
+  .use(function() { ... });
+```
+
+### [.position](lib/parser.js#L123)
+
+Mark position and update `node.position`.
+
+* `returns` **{Function}**: Function used to update the position when finished.
+
+**Example**
+
+```js
+var pos = this.position();
+var node = pos({type: 'dot'});
+```
+
+### [.match](lib/parser.js#L169)
 
 Match `re` and return captures. Advances the position of the parser by the length of the captured string.
 
@@ -280,55 +281,38 @@ function dot() {
 }
 ```
 
-### [.use](lib/parser.js#L314)
+### [.parse](lib/parser.js#L217)
 
-Add a middleware to use for parsing the string resulting in a single node on the AST
+Parse a string by calling each parser in the the `parsers` array until the end of the string is reached.
 
-**Params**
-
-* `fn` **{Function}**: Middleware function to use.
-* `returns` **{Object}** `this`: to enable chaining
+* `returns` **{Object}**: Object representing the parsed AST
 
 **Example**
 
 ```js
-parser
-  .use(function () { ... })
-  .use(function () { ... });
+var ast = snapdragon.parse();
 ```
 
-### Render
+### [Renderer](lib/renderer.js#L22)
 
-### [Renderer](lib/renderer.js#L21)
-
-Create an instance of `Renderer`. This is only necessary if need to create your own instance.
+Create an instance of `Renderer`.
 
 **Params**
 
-* `ast` **{Object}**: Pass the ast generated by `snapdragon.parse()`
+* `ast` **{Object}**: Takes the ast create by `.parse`
 * `options` **{Object}**
 
 **Example**
 
 ```js
-var renderer = new snapdragon.Renderer();
+var parser = new Parser();
+var ast = parser.parse('foo');
+
+var renderer = new Renderer();
+var res = renderer.render(ast);
 ```
 
-### [.error](lib/renderer.js#L57)
-
-Set an error message with the current line number and column.
-
-**Params**
-
-* `message` **{String}**: Message to use in the Error.
-
-**Example**
-
-```js
-this.error('Error parsing string.');
-```
-
-### [.set](lib/renderer.js#L99)
+### [.set](lib/renderer.js#L65)
 
 Register a renderer for a corresponding parser `type`.
 
@@ -336,68 +320,87 @@ Register a renderer for a corresponding parser `type`.
 
 * `name` **{String}**: Name of the renderer to register
 * `fn` **{Function}**: Function to register
-* `returns` **{Object}** `this`: for chaining.
+* `returns` **{Object}**: Returns the `renderer` instance for chaining.
 
 **Example**
 
 ```js
-var ast = snapdragon.parse(str)
+var ast = parse(str)
   .use(function() {
     // `type` is the name of the renderer to use
     return pos({ type: 'dot' });
   })
 
-var res = snapdragon.render(ast, options)
-  .set('dot', function (node) {
+var res = render(ast, options)
+  .set('dot', function(node) {
     return this.emit(node.val);
   })
 ```
 
-## TODO
+### [.render](lib/renderer.js#L130)
 
-* [x] getting started
-* [ ] docs for `.use`
-* [ ] docs for `.set`
-* [ ] docs for child `nodes` (recursion)
-* [ ] unit tests
-* [ ] benchmarks
+Iterate over each node in the given AST and call renderer `type`.
+
+* `returns` **{Object}**: Object representing the parsed AST
+
+**Example**
+
+```js
+var ast = snapdragon.parse('foo/bar');
+var res = snapdragon.render(ast);
+console.log(res);
+
+// enable sourcemap
+var ast = snapdragon.parse('foo/bar');
+var res = snapdragon.render(ast, {sourcemap: true});
+console.log(res);
+```
 
 ## Related projects
 
-Snapdragon was inspired by these great projects by [tj](https://github.com/tj):
+You might also be interested in these projects:
 
 * [css](https://www.npmjs.com/package/css): CSS parser / stringifier | [homepage](https://github.com/reworkcss/css)
-* [jade](https://www.npmjs.com/package/jade): A clean, whitespace-sensitive template language for writing HTML | [homepage](http://jade-lang.com)
+* [pug](https://www.npmjs.com/package/pug): A clean, whitespace-sensitive template language for writing HTML | [homepage](http://pug-lang.com)
+
+## Contributing
+
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/snapdragon/issues/new).
+
+## Building docs
+
+Generate readme and API documentation with [verb](https://github.com/verbose/verb):
+
+```sh
+$ npm install verb && npm run docs
+```
+
+Or, if [verb](https://github.com/verbose/verb) is installed globally:
+
+```sh
+$ verb
+```
 
 ## Running tests
 
 Install dev dependencies:
 
 ```sh
-$ npm i -d && npm test
+$ npm install -d && npm test
 ```
 
-## Contributing
-
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/snapdragon/issues/new).
-
-## Authors
+## Author
 
 **Jon Schlinkert**
 
-+ [github/jonschlinkert](https://github.com/jonschlinkert)
-+ [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
-
-**Brian Woodward**
-
-* [github/doowb](https://github.com/doowb)
-* [twitter/doowb](http://twitter.com/doowb)
+* [github/jonschlinkert](https://github.com/jonschlinkert)
+* [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
 
 ## License
 
-Copyright © 2015 Jon Schlinkert
-Released under the MIT license.
+Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT license](https://github.com/jonschlinkert/snapdragon/blob/master/LICENSE).
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on September 23, 2015._
+_This file was generated by [verb](https://github.com/verbose/verb), v0.9.0, on April 20, 2016._
