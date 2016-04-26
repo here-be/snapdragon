@@ -27,8 +27,8 @@
     "debug": "^2.2.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
-    "lazy-cache": "^1.0.3",
-    "source-map": "^0.5.3",
+    "lazy-cache": "^1.0.4",
+    "source-map": "^0.5.5",
     "source-map-resolve": "^0.5.0",
     "urix": "^0.1.0"
   },
