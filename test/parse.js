@@ -178,10 +178,9 @@ describe('ast', function() {
       });
     });
 
-    it('should create nested nodes', function() {
+    it.skip('should create nested nodes', function() {
       parser.parse('a{b,{c,d},e}f');
-      console.log(parser)
-      // assert.equal(parser.original, 'a/b/c/d/e/f/');
+      assert.equal(parser.original, 'a{b,{c,d},e}f');
     });
   });
 });
