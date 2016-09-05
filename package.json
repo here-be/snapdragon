@@ -1,11 +1,12 @@
 {
   "name": "snapdragon",
-  "description": "snapdragon is an extremely pluggable, powerful and easy-to-use parser-renderer factory.",
-  "version": "0.4.2",
+  "description": "Fast, pluggable and easy-to-use parser-renderer factory.",
+  "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
-  "collaborators": [
-    "Brian Woodward (https://github.com/doowb)"
+  "contributors": [
+    "Brian Woodward <brian.woodward@gmail.com> (https://github.com/doowb)",
+    "Jon Schlinkert <jon.schlinkert@sellside.com> (http://twitter.com/jonschlinkert)"
   ],
   "repository": "jonschlinkert/snapdragon",
   "bugs": {
@@ -14,7 +15,9 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib"
+    "lib",
+    "LICENSE",
+    "README.md"
   ],
   "main": "index.js",
   "engines": {
@@ -26,58 +29,17 @@
   "dependencies": {
     "debug": "^2.2.0",
     "define-property": "^0.2.5",
-    "extend-shallow": "^2.0.1",
-    "lazy-cache": "^2.0.0",
-    "source-map": "^0.5.5",
-    "source-map-resolve": "^0.5.0",
-    "urix": "^0.1.0"
+    "extend-shallow": "^2.0.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-eslint": "^2.0.0",
-    "gulp-format-md": "^0.1.8",
-    "gulp-istanbul": "^0.10.4",
-    "gulp-mocha": "^2.2.0",
-    "mocha": "^2.4.5"
+    "gulp-eslint": "^3.0.1",
+    "gulp-istanbul": "^1.1.1",
+    "gulp-mocha": "^3.0.1",
+    "mocha": "^3.0.2"
   },
   "keywords": [
-    "compile",
-    "compiler",
-    "css",
-    "exec",
-    "match",
-    "parse",
-    "parser",
-    "pattern",
-    "pre",
-    "pre-compile",
-    "regex",
-    "render",
-    "renderer",
-    "stringify"
-  ],
-  "verb": {
-    "reflinks": [
-      "css",
-      "pug",
-      "verb"
-    ],
-    "related": {
-      "list": [
-        "css",
-        "pug"
-      ]
-    },
-    "toc": false,
-    "layout": "default",
-    "tasks": [
-      "readme"
-    ],
-    "plugins": [
-      "gulp-format-md"
-    ],
-    "lint": {
-      "reflinks": true
-    }
-  }
+    "lexer",
+    "snapdragon"
+  ]
 }

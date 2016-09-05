@@ -1,4 +1,5 @@
 'use strict';
 
-module.exports.Renderer = require('./lib/renderer');
-module.exports.Parser = require('./lib/parser');
+exports.Compiler = require('./lib/compiler');
+exports.Lexer = require('./lib/lexer');
+exports.Parser = require('./lib/parser');
