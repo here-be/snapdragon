@@ -25,7 +25,7 @@ describe('parser', function() {
       'set',
       'parse',
       'match',
-      'use',
+      'use'
     ];
 
     methods.forEach(function(method) {
@@ -55,24 +55,43 @@ describe('parser', function() {
       });
 
       it('should expose named parsers to middleware:', function() {
-        parser.set('all', function() {
+        var count = 0;
+
+        parser.set('word', function() {
           var pos = this.position();
-          var m = this.match(/^.*/);
+          var m = this.match(/^\w/);
+          if (!m) return;
+
           return pos({
-            type: 'all',
+            type: 'word',
             val: m[0]
           });
         });
 
         parser.use(function() {
           var pos = this.position();
-          var all = this.parsers.all();
-          if (!all) return;
-          return all;
+          var m = this.match(/^\//);
+          if (!m) return;
+
+          var word = this.parsers.word();
+          var prev = this.prev();
+
+          var node = pos({
+            type: 'slash',
+            val: m[0]
+          });
+
+          if (word && word.type === 'word') {
+            count++;
+          }
+
+          prev.nodes.push(node);
+          prev.nodes.push(word);
         });
 
         parser.parse('a/b');
-        assert(parser.nodes.length === 1);
+        assert.equal(parser.ast.nodes.length, 5);
+        assert.equal(count, 1);
       });
     });
   });

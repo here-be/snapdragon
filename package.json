@@ -1,7 +1,7 @@
 {
   "name": "snapdragon",
   "description": "Fast, pluggable and easy-to-use parser-renderer factory.",
-  "version": "0.1.0",
+  "version": "0.4.2",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
@@ -31,8 +31,7 @@
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
     "source-map": "^0.5.6",
-    "source-map-resolve": "^0.5.0",
-    "urix": "^0.1.0"
+    "source-map-resolve": "^0.5.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -44,5 +43,11 @@
   "keywords": [
     "lexer",
     "snapdragon"
-  ]
+  ],
+  "verb": {
+    "reflinks": [
+      "css",
+      "pug"
+    ]
+  }
 }

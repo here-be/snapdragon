@@ -2,14 +2,14 @@
 
 require('mocha');
 var assert = require('assert');
-var Renderer = require('../lib/renderer');
+var Compile = require('../lib/compiler');
 var Parser = require('../lib/parser');
-var renderer;
+var compiler;
 var parser;
 
-describe('renderer', function() {
+describe('compiler', function() {
   beforeEach(function() {
-    renderer = new Renderer();
+    compiler = new Compile();
     parser = new Parser();
     parser
       .use(function() {
@@ -33,34 +33,34 @@ describe('renderer', function() {
   });
 
   describe('errors', function(cb) {
-    it('should throw an error when a renderer is missing', function(cb) {
+    it('should throw an error when a compiler is missing', function(cb) {
       try {
         var ast = parser.parse('a/b/c');
-        renderer.render(ast);      
+        compiler.compile(ast);
         cb(new Error('expected an error'));
       } catch (err) {
         assert(err);
-        assert.equal(err.message, 'renderer "text" is not registered. Failed to render string "a"');
+        assert.equal(err.message, 'string column:1: compiler "text" is not registered');
         cb();
       }
     });
   });
 
-  describe('rendering', function() {
-    beforeEach(function()  {
-      renderer
-        .set('text', function(node)  {
-          return node.val;
+  describe('compiling', function() {
+    beforeEach(function() {
+      compiler
+        .set('text', function(node) {
+          return this.emit(node.val);
         })
-        .set('slash', function(node)  {
-          return '-';
+        .set('slash', function(node) {
+          return this.emit('-');
         });
     });
 
-    it('should set the result on `rendered`', function() {
+    it('should set the result on `output`', function() {
       var ast = parser.parse('a/b/c');
-      renderer.render(ast);
-      assert.equal(renderer.rendered, 'a-b-c');
+      var res = compiler.compile(ast);
+      assert.equal(res.output, 'a-b-c');
     });
   });
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-var Renderer = require('../lib/renderer');
+var Compiler = require('../lib/compiler');
 var Parser = require('../lib/parser');
 var parser = new Parser()
   .use(function() {
@@ -64,7 +64,7 @@ var parser = new Parser()
     });
   });
 
-var renderer = new Renderer()
+var compiler = new Compiler()
   .set('escaped', function(node)  {
     return this.emit('\\' + node.val, node.position);
   })
@@ -85,6 +85,6 @@ var renderer = new Renderer()
   });
 
 var ast = parser.parse('a/\\{{b,c,d}/e');
-var res = renderer.render(ast, {sourcemap: true});
+var res = compiler.compile(ast, {sourcemap: true});
 
 console.log(res);

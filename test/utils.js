@@ -6,8 +6,8 @@ var utils = require('../lib/utils');
 
 describe('utils', function() {
   describe('main export:', function() {
-    it('should expose a function', function() {
-      assert.equal(typeof utils, 'function');
+    it('should expose an object', function() {
+      assert.equal(typeof utils, 'object');
     });
   });
 });

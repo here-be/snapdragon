@@ -10,13 +10,6 @@ describe('parser', function() {
     parser = new Parser();
   });
 
-  describe('input:', function() {
-    it('should add pattern to input property', function() {
-      parser.parse('a/b');
-      assert.equal(parser.input, 'a/b');
-    });
-  });
-
   describe('errors', function(cb) {
     it('should throw an error when invalid args are passed to parse', function(cb) {
       var parser = new Parser();
@@ -72,7 +65,7 @@ describe('parser', function() {
       });
 
       parser.parse('a/b');
-      assert(parser.nodes.length === 1);
+      assert.equal(parser.ast.nodes.length, 3);
     });
 
     it('should be chainable:', function() {
@@ -97,7 +90,7 @@ describe('parser', function() {
         });
 
       parser.parse('a/b');
-      assert(parser.nodes.length === 3);
+      assert.equal(parser.ast.nodes.length, 5);
     });
   });
 });
@@ -126,22 +119,26 @@ describe('ast', function() {
       });
   });
 
+  describe('orig:', function() {
+    it('should add pattern to orig property', function() {
+      parser.parse('a/b');
+      assert.equal(parser.orig, 'a/b');
+    });
+  });
+
   describe('chaining', function() {
     it('should concatenate the `original` string', function() {
-      parser
-        .parse('a/b/')
-        .parse('c/d/')
-        .parse('e/f/');
-      assert.equal(parser.original, 'a/b/c/d/e/f/');
+      parser.parse('a/b/');
+      parser.parse('c/d/');
+      parser.parse('e/f/');
+      assert.equal(parser.orig, 'a/b/c/d/e/f/');
     });
 
     it('should concatenate the ast:', function() {
-      parser
-        .parse('a/b/')
-        .parse('c/d/')
-        .parse('e/f/');
-
-      assert.equal(parser.nodes.length, 12);
+      parser.parse('a/b/');
+      parser.parse('c/d/');
+      parser.parse('e/f/');
+      assert.equal(parser.ast.nodes.length, 14);
     });
   });
 
@@ -178,9 +175,9 @@ describe('ast', function() {
       });
     });
 
-    it.skip('should create nested nodes', function() {
+    it('should set original string on `orig`', function() {
       parser.parse('a{b,{c,d},e}f');
-      assert.equal(parser.original, 'a{b,{c,d},e}f');
+      assert.equal(parser.orig, 'a{b,{c,d},e}f');
     });
   });
 });
