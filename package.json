@@ -29,7 +29,10 @@
   "dependencies": {
     "debug": "^2.2.0",
     "define-property": "^0.2.5",
-    "extend-shallow": "^2.0.1"
+    "extend-shallow": "^2.0.1",
+    "source-map": "^0.5.6",
+    "source-map-resolve": "^0.5.0",
+    "urix": "^0.1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
