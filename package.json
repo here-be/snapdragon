@@ -36,6 +36,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
+    "gulp-format-md": "^0.1.10",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.0.2"
@@ -47,7 +48,23 @@
   "verb": {
     "reflinks": [
       "css",
-      "pug"
-    ]
+      "pug",
+      "verb",
+      "verb-generate-readme"
+    ],
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "lint": {
+      "reflinks": true
+    },
+    "related": {
+      "list": []
+    }
   }
 }

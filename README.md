@@ -1,17 +1,22 @@
-Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https://github.com/doowb).
+# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon.svg?style=flat)](https://travis-ci.org/jonschlinkert/snapdragon)
 
-**Features**
-
-- Bootstrap your own parser, get sourcemap support for free
-- All parsing and rendering is handled by simple, reusable middleware functions
-- Inspired by the parsers in [pug][] and the [css][] lib.
+> Fast, pluggable and easy-to-use parser-renderer factory.
 
 ## Install
+
 Install with [npm](https://www.npmjs.com/):
 
 ```sh
 $ npm install --save snapdragon
 ```
+
+Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https://github.com/doowb).
+
+**Features**
+
+* Bootstrap your own parser, get sourcemap support for free
+* All parsing and compiling is handled by simple, reusable middleware functions
+* Inspired by the parsers in [pug](http://jade-lang.com) and [css](https://github.com/reworkcss/css).
 
 ## Usage examples
 
@@ -35,12 +40,12 @@ var ast = snapdragon.parser('some string', options)
 
 ```js
 // pass the `ast` from the parse method
-var res = snapdragon.renderer(ast)
-  // renderer middleware, called when the name of the middleware
+var res = snapdragon.compiler(ast)
+  // compiler middleware, called when the name of the middleware
   // matches the `node.type` (defined in a parser middleware)
   .set('bar', function () {})
   .set('baz', function () {})
-  .render()
+  .compile()
 ```
 
 See the [examples](./examples/).
@@ -58,7 +63,7 @@ var ast = snapdragon.parser(str, options)
     var m = this.match(/^\./);
     if (!m) return;
     return pos({
-      // `type` specifies the renderer to use
+      // `type` specifies the compiler to use
       type: 'dot',
       val: m[0]
     });
@@ -73,16 +78,16 @@ When the parser finds a match, `pos()` is called, pushing a token for that node 
 { type: 'dot',
   val: '.',
   position:
-   { start: { line: 1, column: 1 },
-     end: { line: 1, column: 2 } }}
+   { start: { lineno: 1, column: 1 },
+     end: { lineno: 1, column: 2 } }}
 ```
 
 **Renderers**
 
-Renderers are _named_ middleware functions that visit over an array of ast nodes to render a string.
+Renderers are _named_ middleware functions that visit over an array of ast nodes to compile a string.
 
 ```js
-var res = snapdragon.renderer(ast)
+var res = snapdragon.compiler(ast)
   .set('dot', function (node) {
     console.log(node.val)
     //=> '.'
@@ -95,7 +100,7 @@ var res = snapdragon.renderer(ast)
 If you want source map support, make sure to emit the position as well.
 
 ```js
-var res = snapdragon.renderer(ast)
+var res = snapdragon.compiler(ast)
   .set('dot', function (node) {
     return this.emit(node.val, node.position);
   })
@@ -113,29 +118,29 @@ A parser middleware is a function that returns an abject called a `token`. This 
 { type: 'dot',
   val: '.',
   position:
-   { start: { line: 1, column: 1 },
-     end: { line: 1, column: 2 } }}
+   { start: { lineno: 1, column: 1 },
+     end: { lineno: 1, column: 2 } }}
 ```
 
 **Example parser middleware**
 
 Match a single `.` in a string:
 
-  1. Get the starting position by calling `this.position()`
-  1. pass a regex for matching a single dot to the `.match` method
-  1. if **no match** is found, return `undefined`
-  1. if a **match** is found, `pos()` is called, which returns a token with:
-      * `type`: the name of the [renderer] to use
-      * `val`: The actual value captured by the regex. In this case, a `.`. Note that you can capture and return whatever will be needed by the corresponding [renderer].
-      * The ending position: automatically calculated by adding the length of the first capture group to the starting position. 
+1. Get the starting position by calling `this.position()`
+2. pass a regex for matching a single dot to the `.match` method
+3. if **no match** is found, return `undefined`
+4. if a **match** is found, `pos()` is called, which returns a token with:
+  - `type`: the name of the [compiler] to use
+  - `val`: The actual value captured by the regex. In this case, a `.`. Note that you can capture and return whatever will be needed by the corresponding [compiler].
+  - The ending position: automatically calculated by adding the length of the first capture group to the starting position.
 
 ## Renderer middleware
 
-Renderers are run when the name of the renderer middleware matches the `type` defined on an ast `node` (which is defined in a parser).
+Renderers are run when the name of the compiler middleware matches the `type` defined on an ast `node` (which is defined in a parser).
 
 **Example**
 
-Exercise: Parse a dot, then render it as an escaped dot.
+Exercise: Parse a dot, then compile it as an escaped dot.
 
 ```js
 var ast = snapdragon.parser('.')
@@ -144,24 +149,23 @@ var ast = snapdragon.parser('.')
     var m = this.match(/^\./);
     if (!m) return;
     return pos({
-      // define the `type` of renderer to use
+      // define the `type` of compiler to use
       type: 'dot',
       val: m[0]
     })
   })
 
-var result = snapdragon.renderer(ast)
+var result = snapdragon.compiler(ast)
   .set('dot', function (node) {
     return this.emit('\\' + node.val);
   })
-  .render()
+  .compile()
 
+console.log(result.output);
 //=> '\.'
 ```
 
 ## API
-
-### Parse
 
 ### [Parser](lib/parser.js#L14)
 
@@ -169,38 +173,73 @@ Create a new `Parser` with the given `input` and `options`.
 
 **Params**
 
-* `input` **{String}**    
-* `options` **{Object}**    
+* `input` **{String}**
+* `options` **{Object}**
 
 Push a `token` onto the `type` stack.
 
 **Params**
 
-* `type` **{String}**    
-* `returns` **{Object}** `token`  
+* `type` **{String}**
+* `returns` **{Object}** `token`
 
 Pop a token off of the `type` stack
 
 **Params**
 
-* `type` **{String}**    
-* `returns` **{Object}**: Returns a token  
+* `type` **{String}**
+* `returns` **{Object}**: Returns a token
 
 Return true if inside a `stack` node. Types are `braces`, `parens` or `brackets`.
 
 **Params**
 
-* `type` **{String}**    
-* `returns` **{Boolean}**  
+* `type` **{String}**
+* `returns` **{Boolean}**
 
 Return true node is the given type.
 
 **Params**
 
-* `type` **{String}**    
-* `returns` **{Boolean}**  
+* `type` **{String}**
+* `returns` **{Boolean}**
 
-### Render
+## About
 
-[css]: https://github.com/reworkcss/css
-[pug]: http://jade-lang.com
+### Contributing
+
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
+
+### Building docs
+
+_(This document was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+
+To generate the readme and API documentation with [verb](https://github.com/verbose/verb):
+
+```sh
+$ npm install -g verb verb-generate-readme && verb
+```
+
+### Running tests
+
+Install dev dependencies:
+
+```sh
+$ npm install -d && npm test
+```
+
+### Author
+
+**Jon Schlinkert**
+
+* [github/jonschlinkert](https://github.com/jonschlinkert)
+* [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
+
+### License
+
+Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT license](https://github.com/jonschlinkert/snapdragon/blob/master/LICENSE).
+
+***
+
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.1.30, on September 05, 2016._
