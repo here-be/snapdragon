@@ -18,6 +18,18 @@ Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https:/
 * All parsing and compiling is handled by simple, reusable middleware functions
 * Inspired by the parsers in [pug](http://jade-lang.com) and [css](https://github.com/reworkcss/css).
 
+## History
+
+### v0.5.0
+
+**Breaking changes**
+
+Substantial breaking changes were made in v0.5.0! Most of these changes are part of a larger refactor that will be finished in 0.6.0, including the introduction of a `Lexer` class.
+
+* Renderer was renamed to `Compiler`
+* the `.render` method was renamed to `.compile`
+* Many other smaller changes. A more detailed overview will be provided in 0.6.0. If you don't have to time review code, I recommend you wait for the 0.6.0 release.
+
 ## Usage examples
 
 ```js
