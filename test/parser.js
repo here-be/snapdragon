@@ -68,7 +68,7 @@ describe('parser', function() {
           });
         });
 
-        parser.use(function() {
+        parser.set('slash', function() {
           var pos = this.position();
           var m = this.match(/^\//);
           if (!m) return;

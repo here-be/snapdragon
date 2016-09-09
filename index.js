@@ -1,8 +1,11 @@
 'use strict';
 
+var Base = require('base');
 var Compiler = require('./lib/compiler');
 var Parser = require('./lib/parser');
 var utils = require('./lib/utils');
+var regexCache = {};
+var cache = {};
 
 /**
  * Create a new instance of `Snapdragon` with the given `options`.
@@ -16,8 +19,17 @@ var utils = require('./lib/utils');
  */
 
 function Snapdragon(options) {
-  this.options = utils.extend({source: 'string'}, options);
+  Base.call(this, null, options);
+  this.options = utils.extend({source: 'string'}, this.options);
+  this.compiler = new Compiler(this.options);
+  this.parser = new Parser(this.options);
 }
+
+/**
+ * Inherit Base
+ */
+
+Base.extend(Snapdragon);
 
 /**
  * Register a plugin `fn`.
@@ -93,42 +105,99 @@ Snapdragon.prototype.parse = function(str, options) {
 
 Snapdragon.prototype.compile = function(ast, options) {
   this.options = utils.extend({}, this.options, options);
-  return this.compiler.compile(ast, this.options);
+  var compiled = this.compiler.compile(ast, this.options);
+
+  // add non-enumerable compiler reference
+  utils.define(compiled, 'compiler', this.compiler);
+  return compiled;
 };
 
 /**
- * Getter for lazily creating a new `Parser` when the [parse](#parse)
- * method is called.
+ * Create a regular expression from the given string `pattern`.
  *
  * ```js
+ * var Snapdragon = require('snapdragon');
  * var snapdragon = new Snapdragon();
- * console.log(snapdragon.parser);
- * ```
  *
- * @return {Object} Returns a new `Snapdragon.Parser` instance.
+ * var re = snapdragon.makeRe('*.!(*a)');
+ * console.log(re);
+ * //=> /^[^\/]*?\.(?![^\/]*?a)[^\/]*?$/
+ * ```
+ * @param {String} `pattern` The pattern to convert to regex.
+ * @param {Object} `options`
+ * @return {RegExp}
  * @api public
  */
 
-utils.defineProp(Snapdragon.prototype, 'parser', function() {
-  return new Parser(this.options);
-});
+Snapdragon.prototype.makeRe = function(pattern, options) {
+  var key = pattern;
+  var regex;
+
+  if (options) {
+    for (var prop in options) {
+      if (options.hasOwnProperty(prop)) {
+        key += ';' + prop + '=' + String(options[prop]);
+      }
+    }
+  }
+
+  if (cache.hasOwnProperty(key)) {
+    return cache[key];
+  }
+
+  var ast = this.parse(pattern, options);
+  // console.log(util.inspect(ast, null, 10))
+  var res = this.compile(ast, options);
+  // console.log(res.output)
+  // console.log(pattern)
+  regex = cache[key] = this.toRegex(res.output, options);
+  // console.log(regex)
+  return regex;
+};
 
 /**
- * Getter for lazily creating a new `Compiler` when the [compile](#compile)
- * method is called.
- *
- * ```js
- * var snapdragon = new Snapdragon();
- * console.log(snapdragon.compiler);
- * ```
- *
- * @return {Object} Returns a new `Snapdragon.Compiler` instance.
- * @api public
+ * Create a regex from the given `string` and `options`
  */
 
-utils.defineProp(Snapdragon.prototype, 'compiler', function() {
-  return new Compiler(this.options);
-});
+Snapdragon.prototype.toRegex = function(pattern, options) {
+  if (pattern instanceof RegExp) return pattern;
+  var key = pattern;
+
+  if (options) {
+    for (var prop in options) {
+      if (options.hasOwnProperty(prop)) {
+        key += ':' + prop + ':' + String(options[prop]);
+      }
+    }
+  }
+
+  options = options || {};
+  if (options.cache !== false && regexCache.hasOwnProperty(key)) {
+    return regexCache[key];
+  }
+
+  var flags = options.flags || '';
+  if (options.nocase === true && !/i/.test(flags)) {
+    flags += 'i';
+  }
+
+  var prefix = options.strictOpen !== false ? '^' : '';
+  var suffix = options.strictClose !== false ? '$' : '';
+
+  try {
+    var str = prefix + '(?:' + pattern + ')' + suffix;
+    if (options.isNegated) {
+      str = utils.not(str);
+    }
+
+    var re = new RegExp(str, flags);
+    regexCache[key] = re;
+    return re;
+  } catch (err) {
+    if (options.strict) throw err;
+    return /$^/;
+  }
+};
 
 /**
  * Expose `Snapdragon`

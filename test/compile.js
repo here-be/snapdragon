@@ -12,7 +12,7 @@ describe('compiler', function() {
     compiler = new Compile();
     parser = new Parser();
     parser
-      .use(function() {
+      .set('text', function() {
         var pos = this.position();
         var m = this.match(/^\w+/);
         if (!m) return;
@@ -21,7 +21,7 @@ describe('compiler', function() {
           val: m[0]
         });
       })
-      .use(function() {
+      .set('slash', function() {
         var pos = this.position();
         var m = this.match(/^\//);
         if (!m) return;

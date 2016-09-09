@@ -24,11 +24,12 @@ describe('parser', function() {
     });
   });
 
-  describe('.use():', function() {
+  describe('.set():', function() {
     it('should register middleware', function() {
-      parser.use(function() {
+      parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
+        if (!m) return;
         return pos({
           type: 'all',
           val: m[0]
@@ -36,11 +37,11 @@ describe('parser', function() {
       });
 
       parser.parse('a/b');
-      assert(parser.fns.length === 1);
+      assert(parser.parsers.hasOwnProperty('all'));
     });
 
     it('should use middleware to parse', function() {
-      parser.use(function() {
+      parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
         return pos({
@@ -55,7 +56,7 @@ describe('parser', function() {
     });
 
     it('should create ast node:', function() {
-      parser.use(function() {
+      parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
         return pos({
@@ -70,7 +71,7 @@ describe('parser', function() {
 
     it('should be chainable:', function() {
       parser
-        .use(function() {
+        .set('text', function() {
           var pos = this.position();
           var m = this.match(/^\w+/);
           if (!m) return;
@@ -79,7 +80,7 @@ describe('parser', function() {
             val: m[0]
           });
         })
-        .use(function() {
+        .set('slash', function() {
           var pos = this.position();
           var m = this.match(/^\//);
           if (!m) return;
@@ -99,7 +100,7 @@ describe('ast', function() {
   beforeEach(function() {
     parser = new Parser();
     parser
-      .use(function() {
+      .set('text', function() {
         var pos = this.position();
         var m = this.match(/^\w+/);
         if (!m) return;
@@ -108,7 +109,7 @@ describe('ast', function() {
           val: m[0]
         });
       })
-      .use(function() {
+      .set('slash', function() {
         var pos = this.position();
         var m = this.match(/^\//);
         if (!m) return;
@@ -126,25 +127,19 @@ describe('ast', function() {
     });
   });
 
-  describe('chaining', function() {
-    it('should concatenate the `original` string', function() {
-      parser.parse('a/b/');
-      parser.parse('c/d/');
-      parser.parse('e/f/');
-      assert.equal(parser.orig, 'a/b/c/d/e/f/');
-    });
-
-    it('should concatenate the ast:', function() {
-      parser.parse('a/b/');
-      parser.parse('c/d/');
-      parser.parse('e/f/');
-      assert.equal(parser.ast.nodes.length, 14);
-    });
-  });
-
   describe('recursion', function() {
     beforeEach(function() {
-      parser.use(function() {
+      parser.set('text', function() {
+        var pos = this.position();
+        var m = this.match(/^\w/);
+        if (!m) return;
+        return pos({
+          type: 'text',
+          val: m[0]
+        });
+      });
+
+      parser.set('open', function() {
         var pos = this.position();
         var m = this.match(/^{/);
         if (!m) return;
@@ -154,7 +149,7 @@ describe('ast', function() {
         });
       });
 
-      parser.use(function() {
+      parser.set('close', function() {
         var pos = this.position();
         var m = this.match(/^}/);
         if (!m) return;
@@ -164,7 +159,7 @@ describe('ast', function() {
         });
       });
 
-      parser.use(function() {
+      parser.set('comma', function() {
         var pos = this.position();
         var m = this.match(/,/);
         if (!m) return;
