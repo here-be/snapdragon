@@ -1,7 +1,7 @@
 {
   "name": "snapdragon",
   "description": "Fast, pluggable and easy-to-use parser-renderer factory.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
