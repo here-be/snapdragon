@@ -15,9 +15,7 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib",
-    "LICENSE",
-    "README.md"
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -32,7 +30,8 @@
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
     "source-map": "^0.5.6",
-    "source-map-resolve": "^0.5.0"
+    "source-map-resolve": "^0.5.0",
+    "use": "^2.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -40,6 +39,7 @@
     "gulp-format-md": "^0.1.10",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
+    "gulp-unused": "^0.2.0",
     "mocha": "^3.0.2"
   },
   "keywords": [
@@ -47,12 +47,6 @@
     "snapdragon"
   ],
   "verb": {
-    "reflinks": [
-      "css",
-      "pug",
-      "verb",
-      "verb-generate-readme"
-    ],
     "toc": false,
     "layout": "default",
     "tasks": [
@@ -61,11 +55,23 @@
     "plugins": [
       "gulp-format-md"
     ],
+    "related": {
+      "description": "These libraries use snapdragon:",
+      "list": [
+        "braces",
+        "micromatch",
+        "expand-brackets",
+        "extglob"
+      ]
+    },
+    "reflinks": [
+      "css",
+      "pug",
+      "verb",
+      "verb-generate-readme"
+    ],
     "lint": {
       "reflinks": true
-    },
-    "related": {
-      "list": []
     }
   }
 }
