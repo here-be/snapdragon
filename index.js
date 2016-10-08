@@ -1,6 +1,7 @@
 'use strict';
 
 var Base = require('base');
+var define = require('define-property');
 var Compiler = require('./lib/compiler');
 var Parser = require('./lib/parser');
 var utils = require('./lib/utils');
@@ -74,7 +75,7 @@ Snapdragon.prototype.parse = function(str, options) {
   var parsed = this.parser.parse(str, this.options);
 
   // add non-enumerable parser reference
-  utils.define(parsed, 'parser', this.parser);
+  define(parsed, 'parser', this.parser);
   return parsed;
 };
 
@@ -108,7 +109,7 @@ Snapdragon.prototype.compile = function(ast, options) {
   var compiled = this.compiler.compile(ast, this.options);
 
   // add non-enumerable compiler reference
-  utils.define(compiled, 'compiler', this.compiler);
+  define(compiled, 'compiler', this.compiler);
   return compiled;
 };
 
