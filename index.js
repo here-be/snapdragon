@@ -24,6 +24,24 @@ function Snapdragon(options) {
   this.options = utils.extend({source: 'string'}, this.options);
   this.compiler = new Compiler(this.options);
   this.parser = new Parser(this.options);
+
+  Object.defineProperty(this, 'compilers', {
+    get: function() {
+      return this.compiler.compilers;
+    }
+  });
+
+  Object.defineProperty(this, 'parsers', {
+    get: function() {
+      return this.parser.parsers;
+    }
+  });
+
+  Object.defineProperty(this, 'regex', {
+    get: function() {
+      return this.parser.regex;
+    }
+  });
 }
 
 /**
@@ -31,6 +49,35 @@ function Snapdragon(options) {
  */
 
 Base.extend(Snapdragon);
+
+/**
+ * Add a parser to `snapdragon.parsers` for capturing the given `type` using
+ * the specified regex or parser function. A function is useful if you need
+ * to customize how the token is created and/or have access to the parser
+ * instance to check options, etc.
+ *
+ * ```js
+ * snapdragon
+ *   .capture('slash', /^\//)
+ *   .capture('dot', function() {
+ *     var pos = this.position();
+ *     var m = this.match(/^\./);
+ *     if (!m) return;
+ *     return pos({
+ *       type: 'dot',
+ *       val: m[0]
+ *     });
+ *   });
+ * ```
+ * @param {String} `type`
+ * @param {RegExp|Function} `regex`
+ * @return {Object} Returns the parser instance for chaining
+ * @api public
+ */
+
+Snapdragon.prototype.capture = function() {
+  return this.parser.capture.apply(this.parser, arguments);
+};
 
 /**
  * Register a plugin `fn`.

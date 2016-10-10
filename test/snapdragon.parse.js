@@ -3,19 +3,17 @@
 require('mocha');
 var assert = require('assert');
 var Snapdragon = require('..');
-var Parser = require('../lib/parser');
-var parser;
+var snapdragon;
 
 describe('parser', function() {
   beforeEach(function() {
-    parser = new Parser();
+    snapdragon = new Snapdragon();
   });
 
   describe('errors', function(cb) {
     it('should throw an error when invalid args are passed to parse', function(cb) {
-      var parser = new Parser();
       try {
-        parser.parse();
+        snapdragon.parse();
         cb(new Error('expected an error'));
       } catch (err) {
         assert(err);
@@ -27,7 +25,7 @@ describe('parser', function() {
 
   describe('.set():', function() {
     it('should register middleware', function() {
-      parser.set('all', function() {
+      snapdragon.parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
         if (!m) return;
@@ -37,12 +35,12 @@ describe('parser', function() {
         });
       });
 
-      parser.parse('a/b');
-      assert(parser.parsers.hasOwnProperty('all'));
+      snapdragon.parse('a/b');
+      assert(snapdragon.parsers.hasOwnProperty('all'));
     });
 
     it('should use middleware to parse', function() {
-      parser.set('all', function() {
+      snapdragon.parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
         return pos({
@@ -51,13 +49,13 @@ describe('parser', function() {
         });
       });
 
-      parser.parse('a/b');
-      assert.equal(parser.parsed, 'a/b');
-      assert.equal(parser.input, '');
+      snapdragon.parse('a/b');
+      assert.equal(snapdragon.parser.parsed, 'a/b');
+      assert.equal(snapdragon.parser.input, '');
     });
 
     it('should create ast node:', function() {
-      parser.set('all', function() {
+      snapdragon.parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
         return pos({
@@ -66,12 +64,12 @@ describe('parser', function() {
         });
       });
 
-      parser.parse('a/b');
-      assert.equal(parser.ast.nodes.length, 3);
+      snapdragon.parse('a/b');
+      assert.equal(snapdragon.parser.ast.nodes.length, 3);
     });
 
     it('should be chainable:', function() {
-      parser
+      snapdragon.parser
         .set('text', function() {
           var pos = this.position();
           var m = this.match(/^\w+/);
@@ -91,16 +89,16 @@ describe('parser', function() {
           });
         });
 
-      parser.parse('a/b');
-      assert.equal(parser.ast.nodes.length, 5);
+      snapdragon.parse('a/b');
+      assert.equal(snapdragon.parser.ast.nodes.length, 5);
     });
   });
 });
 
 describe('ast', function() {
   beforeEach(function() {
-    parser = new Parser();
-    parser
+    snapdragon = new Snapdragon();
+    snapdragon.parser
       .set('text', function() {
         var pos = this.position();
         var m = this.match(/^\w+/);
@@ -123,14 +121,14 @@ describe('ast', function() {
 
   describe('orig:', function() {
     it('should add pattern to orig property', function() {
-      parser.parse('a/b');
-      assert.equal(parser.orig, 'a/b');
+      snapdragon.parse('a/b');
+      assert.equal(snapdragon.parser.orig, 'a/b');
     });
   });
 
   describe('recursion', function() {
     beforeEach(function() {
-      parser.set('text', function() {
+      snapdragon.parser.set('text', function() {
         var pos = this.position();
         var m = this.match(/^\w/);
         if (!m) return;
@@ -140,7 +138,7 @@ describe('ast', function() {
         });
       });
 
-      parser.set('open', function() {
+      snapdragon.parser.set('open', function() {
         var pos = this.position();
         var m = this.match(/^{/);
         if (!m) return;
@@ -150,7 +148,7 @@ describe('ast', function() {
         });
       });
 
-      parser.set('close', function() {
+      snapdragon.parser.set('close', function() {
         var pos = this.position();
         var m = this.match(/^}/);
         if (!m) return;
@@ -160,7 +158,7 @@ describe('ast', function() {
         });
       });
 
-      parser.set('comma', function() {
+      snapdragon.parser.set('comma', function() {
         var pos = this.position();
         var m = this.match(/,/);
         if (!m) return;
@@ -172,8 +170,8 @@ describe('ast', function() {
     });
 
     it('should set original string on `orig`', function() {
-      parser.parse('a{b,{c,d},e}f');
-      assert.equal(parser.orig, 'a{b,{c,d},e}f');
+      snapdragon.parse('a{b,{c,d},e}f');
+      assert.equal(snapdragon.parser.orig, 'a{b,{c,d},e}f');
     });
   });
 });
