@@ -1,6 +1,24 @@
-# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon.svg?style=flat)](https://travis-ci.org/jonschlinkert/snapdragon)
+# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM monthly downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon)  [![NPM total downloads](https://img.shields.io/npm/dt/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/snapdragon)
 
-> Fast, pluggable and easy-to-use parser-renderer factory.
+> Easy-to-use plugin system for creating powerful, fast and versatile parsers and compilers, with built-in source-map support.
+
+<details>
+<summary><strong>Table of Contents</strong></summary>
+- [Install](#install)
+- [Usage examples](#usage-examples)
+- [Getting started](#getting-started)
+- [Docs](#docs)
+  * [Parser middleware](#parser-middleware)
+- [Renderer middleware](#renderer-middleware)
+- [API](#api)
+  * [Parse](#parse)
+  * [Compile](#compile)
+- [Snapdragon in the wild](#snapdragon-in-the-wild)
+- [History](#history)
+  * [v0.9.0](#v090)
+  * [v0.5.0](#v050)
+- [About](#about)
+</details>
 
 ## Install
 
@@ -17,18 +35,6 @@ Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https:/
 * Bootstrap your own parser, get sourcemap support for free
 * All parsing and compiling is handled by simple, reusable middleware functions
 * Inspired by the parsers in [pug](http://jade-lang.com) and [css](https://github.com/reworkcss/css).
-
-## History
-
-### v0.5.0
-
-**Breaking changes**
-
-Substantial breaking changes were made in v0.5.0! Most of these changes are part of a larger refactor that will be finished in 0.6.0, including the introduction of a `Lexer` class.
-
-* Renderer was renamed to `Compiler`
-* the `.render` method was renamed to `.compile`
-* Many other smaller changes. A more detailed overview will be provided in 0.6.0. If you don't have to time review code, I recommend you wait for the 0.6.0 release.
 
 ## Usage examples
 
@@ -134,18 +140,6 @@ A parser middleware is a function that returns an abject called a `token`. This 
      end: { lineno: 1, column: 2 } }}
 ```
 
-**Example parser middleware**
-
-Match a single `.` in a string:
-
-1. Get the starting position by calling `this.position()`
-2. pass a regex for matching a single dot to the `.match` method
-3. if **no match** is found, return `undefined`
-4. if a **match** is found, `pos()` is called, which returns a token with:
-  - `type`: the name of the [compiler] to use
-  - `val`: The actual value captured by the regex. In this case, a `.`. Note that you can capture and return whatever will be needed by the corresponding [compiler].
-  - The ending position: automatically calculated by adding the length of the first capture group to the starting position.
-
 ## Renderer middleware
 
 Renderers are run when the name of the compiler middleware matches the `type` defined on an ast `node` (which is defined in a parser).
@@ -179,7 +173,7 @@ console.log(result.output);
 
 ## API
 
-### [Parser](lib/parser.js#L19)
+### [Parser](lib/parser.js#L21)
 
 Create a new `Parser` with the given `input` and `options`.
 
@@ -188,9 +182,24 @@ Create a new `Parser` with the given `input` and `options`.
 * `input` **{String}**
 * `options` **{Object}**
 
-### [.define](lib/parser.js#L103)
+Throw a formatted error message with details including the cursor position.
+
+**Params**
+
+* `msg` **{String}**: Message to use in the Error.
+* `message` **{String}**
+* `node` **{Object}**
+* `returns` **{undefined}**
+
+### [.define](lib/parser.js#L106)
 
 Define a non-enumberable property on the `Parser` instance.
+
+**Params**
+
+* `key` **{String}**: propery name
+* `val` **{any}**: property value
+* `returns` **{Object}**: Returns the Parser instance for chaining.
 
 **Example**
 
@@ -200,41 +209,119 @@ parser.define('foo', 'bar');
 
 **Params**
 
-* `key` **{String}**: propery name
-* `val` **{any}**: property value
-* `returns` **{Object}**: Returns the Parser instance for chaining.
+* `position` **{Function}**
+* `val` **{Object}**
+* `type` **{String}**
+* `returns` **{Object}**: returns the [Node](#node) instance.
 
-Set parser `name` with the given `fn`
+**Example**
+
+```js
+compiler.node(compiler.position(), 'slash', '/');
+```
 
 **Params**
 
-* `name` **{String}**
+* `message` **{String}**
+* `node` **{Object}**
+* `returns` **{undefined}**
+
+**Example**
+
+```js
+parser.set('foo', function(node) {
+  var pos = this.position();
+  var match = this.match(/foo/);
+  if (match) {
+    // pass `pos` to `this.node` to patch position
+    return this.node(pos, match[0]);
+  }
+});
+```
+
+**Params**
+
+* `type` **{String}**
 * `fn` **{Function}**
 
-Get parser `name`
+**Example**
+
+```js
+ parser.set('all', function() {
+   var pos = this.position();
+   var match = this.match(/^./);
+   if (match) {
+     return this.node(pos, match[0]);
+   }
+ });
+```
 
 **Params**
 
-* `name` **{String}**
+* `type` **{String}**
 
-Push a `token` onto the `type` stack.
+**Example**
+
+```js
+var fn = parser.get('slash');
+```
 
 **Params**
 
 * `type` **{String}**
 * `returns` **{Object}** `token`
 
-Pop a token off of the `type` stack
+**Example**
+
+```js
+parser.set('all', function() {
+  var pos = this.position();
+  var match = this.match(/^./);
+  if (match) {
+    var node = this.node(pos, match[0]);
+    this.push(node);
+    return node;
+  }
+});
+```
 
 **Params**
 
 * `type` **{String}**
 * `returns` **{Object}**: Returns a token
 
-Return true if inside a `stack` node. Types are `braces`, `parens` or `brackets`.
+**Example**
+
+```js
+ parser.set('close', function() {
+   var pos = this.position();
+   var m = this.match(/^\}/);
+   if (!m) return;
+
+   var node = pos({
+     type: 'close',
+     val: m[0]
+   });
+
+   this.pop(node.type);
+   return node;
+ });
+```
+
+Return true if inside a "set" of the given `type`. Sets are created
+manually by adding a type to `parser.sets`. A node is "inside" a set
+when an `*.open` node for the given `type` was previously pushed onto the set.
+The type is removed from the set by popping it off when the `*.close`
+node for the given type is reached.
 
 **Params**
 
+* `type` **{String}**
+* `returns` **{Boolean}**
+
+**Params**
+
+* `node` **{Object}**
 * `type` **{String}**
 * `returns` **{Boolean}**
 
@@ -244,21 +331,60 @@ Return true if inside a `stack` node. Types are `braces`, `parens` or `brackets`
 parser.isType(node, 'brace');
 ```
 
+### [Compiler](lib/compiler.js#L22)
+
+Create a new `Compiler` with the given `options`.
+
 **Params**
 
-* `node` **{Object}**
-* `type` **{String}**
-* `returns` **{Boolean}**
-
-### [.define](lib/compiler.js#L71)
-
-Define a non-enumberable property on the `Compiler` instance.
+* `options` **{Object}**
+* `state` **{Object}**: Optionally pass a "state" object to use inside visitor functions.
 
 **Example**
 
 ```js
-compiler.define('foo', 'bar');
+var Snapdragon = require('snapdragon');
+var Compiler = Snapdragon.Compiler;
+var compiler = new Compiler();
 ```
+
+Throw a formatted error message with details including the cursor position.
+
+**Params**
+
+* `msg` **{String}**: Message to use in the Error.
+* `message` **{String}**
+* `node` **{Object}**
+* `returns` **{undefined}**
+
+**Params**
+
+* `string` **{String}**
+* `node` **{Object}**: Optionally pass the node to use for position if source maps are enabled.
+* `returns` **{String}**: returns the string
+
+**Example**
+
+```js
+compiler.set('foo', function(node) {
+  this.emit(node.val, node);
+});
+```
+
+**Params**
+
+* **{Object}**: node
+
+**Example**
+
+```js
+// example: do nothing for beginning-of-string
+snapdragon.compiler.set('bos', compiler.noop);
+```
+
+### [.define](lib/compiler.js#L117)
+
+Define a non-enumberable property on the `Compiler` instance. Useful in pluggins for adding methods to an
 
 **Params**
 
@@ -266,14 +392,123 @@ compiler.define('foo', 'bar');
 * `val` **{any}**: property value
 * `returns` **{Object}**: Returns the Compiler instance for chaining.
 
+**Example**
+
+```js
+compiler.define('customMethod', function() {
+  // do stuff
+});
+```
+
+**Params**
+
+* `type` **{String}**
+* `fn` **{Function}**
+
+**Example**
+
+```js
+compiler
+  .set('comma', function(node) {
+    this.emit(',');
+  })
+  .set('dot', function(node) {
+    this.emit('.');
+  })
+  .set('slash', function(node) {
+    this.emit('/');
+  });
+```
+
+**Params**
+
+* `type` **{String}**
+
+**Example**
+
+```js
+var fn = compiler.get('slash');
+```
+
+**Params**
+
+* `node` **{Object}**
+* `returns` **{Object}**: returns the node
+
+**Example**
+
+```js
+compiler
+  .set('i', function(node) {
+    this.visit(node);
+  })
+```
+
+**Params**
+
+* `node` **{Object}**
+* `returns` **{Object}**: returns the node
+
+**Example**
+
+```js
+compiler
+  .set('i', function(node) {
+    utils.mapVisit(node);
+  })
+```
+
+**Params**
+
+* `ast` **{Object}**
+* `options` **{Object}**: Compiler options
+* `returns` **{Object}**: returns the node
+
+**Example**
+
+```js
+var ast = parser.parse('foo');
+var str = compiler.compile(ast);
+```
+
+## Snapdragon in the wild
+
+A few of the libraries that use snapdragon:
+
+* [braces](https://www.npmjs.com/package/braces): Fast, comprehensive, bash-like brace expansion implemented in JavaScript. Complete support for the Bash 4.3 braces… [more](https://github.com/jonschlinkert/braces) | [homepage](https://github.com/jonschlinkert/braces "Fast, comprehensive, bash-like brace expansion implemented in JavaScript. Complete support for the Bash 4.3 braces specification, without sacrificing speed.")
+* [expand-brackets](https://www.npmjs.com/package/expand-brackets): Expand POSIX bracket expressions (character classes) in glob patterns. | [homepage](https://github.com/jonschlinkert/expand-brackets "Expand POSIX bracket expressions (character classes) in glob patterns.")
+* [extglob](https://www.npmjs.com/package/extglob): Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob… [more](https://github.com/jonschlinkert/extglob) | [homepage](https://github.com/jonschlinkert/extglob "Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob patterns.")
+* [micromatch](https://www.npmjs.com/package/micromatch): Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch. | [homepage](https://github.com/jonschlinkert/micromatch "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
+
+## History
+
+### v0.9.0
+
+**Breaking changes!**
+
+In an attempt to make snapdragon lighter, more versatile, and more pluggable, some major changes were made in this release.
+
+* `parser.capture` was externalized to [snapdragon-capture](https://github.com/jonschlinkert/snapdragon-capture)
+* `parser.capturePair` was externalized to [snapdragon-capture-set](https://github.com/jonschlinkert/snapdragon-capture-set)
+* Nodes are now an instance of [snapdragon-node](https://github.com/jonschlinkert/snapdragon-node)
+
+### v0.5.0
+
+**Breaking changes!**
+
+Substantial breaking changes were made in v0.5.0! Most of these changes are part of a larger refactor that will be finished in 0.6.0, including the introduction of a `Lexer` class.
+
+* Renderer was renamed to `Compiler`
+* the `.render` method was renamed to `.compile`
+
 ## About
 
 ### Related projects
 
-* [braces](https://www.npmjs.com/package/braces): Fastest brace expansion for node.js, with the most complete support for the Bash 4.3 braces… [more](https://github.com/jonschlinkert/braces) | [homepage](https://github.com/jonschlinkert/braces "Fastest brace expansion for node.js, with the most complete support for the Bash 4.3 braces specification.")
-* [expand-brackets](https://www.npmjs.com/package/expand-brackets): Expand POSIX bracket expressions (character classes) in glob patterns. | [homepage](https://github.com/jonschlinkert/expand-brackets "Expand POSIX bracket expressions (character classes) in glob patterns.")
-* [extglob](https://www.npmjs.com/package/extglob): Convert extended globs to regex-compatible strings. Add (almost) the expressive power of regular expressions to… [more](https://github.com/jonschlinkert/extglob) | [homepage](https://github.com/jonschlinkert/extglob "Convert extended globs to regex-compatible strings. Add (almost) the expressive power of regular expressions to glob patterns.")
-* [micromatch](https://www.npmjs.com/package/micromatch): Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch. | [homepage](https://github.com/jonschlinkert/micromatch "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
+* [snapdragon-capture-set](https://www.npmjs.com/package/snapdragon-capture-set): Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have… [more](https://github.com/jonschlinkert/snapdragon-capture-set) | [homepage](https://github.com/jonschlinkert/snapdragon-capture-set "Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have an `open` and `close`, like braces, brackets, etc")
+* [snapdragon-capture](https://www.npmjs.com/package/snapdragon-capture): Snapdragon plugin that adds a capture method to the parser instance. | [homepage](https://github.com/jonschlinkert/snapdragon-capture "Snapdragon plugin that adds a capture method to the parser instance.")
+* [snapdragon-node](https://www.npmjs.com/package/snapdragon-node): Snapdragon utility for creating a new AST node in custom code, such as plugins. | [homepage](https://github.com/jonschlinkert/snapdragon-node "Snapdragon utility for creating a new AST node in custom code, such as plugins.")
+* [snapdragon-util](https://www.npmjs.com/package/snapdragon-util): Utilities for the snapdragon parser/compiler. | [homepage](https://github.com/jonschlinkert/snapdragon-util "Utilities for the snapdragon parser/compiler.")
 
 ### Contributing
 
@@ -281,9 +516,9 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 ### Contributors
 
-| **Commits** | **Contributor**<br/> | 
+| **Commits** | **Contributor** | 
 | --- | --- |
-| 106 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 111 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 2 | [doowb](https://github.com/doowb) |
 
 ### Building docs
@@ -309,13 +544,13 @@ $ npm install -d && npm test
 **Jon Schlinkert**
 
 * [github/jonschlinkert](https://github.com/jonschlinkert)
-* [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
+* [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
 
 ### License
 
-Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](https://github.com/jonschlinkert/snapdragon/blob/master/LICENSE).
+Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT license](LICENSE).
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.1.31, on October 10, 2016._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.1, on January 21, 2017._
