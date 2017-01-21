@@ -45,6 +45,7 @@ describe('parser', function() {
         parser.set('all', function() {
           var pos = this.position();
           var m = this.match(/^.*/);
+          if (!m) return;
           return pos({
             type: 'all',
             val: m[0]

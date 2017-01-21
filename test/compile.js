@@ -14,21 +14,17 @@ describe('compiler', function() {
     parser
       .set('text', function() {
         var pos = this.position();
-        var m = this.match(/^\w+/);
-        if (!m) return;
-        return pos({
-          type: 'text',
-          val: m[0]
-        });
+        var match = this.match(/^\w+/);
+        if (match) {
+          return pos(this.node(match[0]));
+        }
       })
       .set('slash', function() {
         var pos = this.position();
-        var m = this.match(/^\//);
-        if (!m) return;
-        return pos({
-          type: 'slash',
-          val: m[0]
-        });
+        var match = this.match(/^\//);
+        if (match) {
+          return pos(this.node(match[0]))
+        }
       });
   });
 
@@ -40,13 +36,13 @@ describe('compiler', function() {
         cb(new Error('expected an error'));
       } catch (err) {
         assert(err);
-        assert.equal(err.message, 'string column:1: compiler "text" is not registered');
+        assert.equal(err.message, 'string <line:1 column:1>: compiler "text" is not registered');
         cb();
       }
     });
   });
 
-  describe('compiling', function() {
+  describe('.compile', function() {
     beforeEach(function() {
       compiler
         .set('text', function(node) {

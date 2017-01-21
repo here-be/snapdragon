@@ -3,11 +3,13 @@
 require('mocha');
 var assert = require('assert');
 var Snapdragon = require('..');
+var capture = require('snapdragon-capture');
 var snapdragon;
 
 describe('parser', function() {
   beforeEach(function() {
     snapdragon = new Snapdragon();
+    snapdragon.use(capture());
   });
 
   describe('.regex():', function() {

@@ -25,6 +25,42 @@ describe('parser', function() {
     });
   });
 
+  describe('bos', function() {
+    it('should set a beginning-of-string node', function() {
+      var parser = new Parser();
+      parser.set('all', function() {
+        var pos = this.position();
+        var m = this.match(/^.*/);
+        if (!m) return;
+        return pos({
+          type: 'all',
+          val: m[0]
+        });
+      });
+
+      var ast = parser.parse('a/b');
+      assert.equal(ast.nodes[0].type, 'bos');
+    });
+  });
+
+  describe('eos', function() {
+    it('should set an end-of-string node', function() {
+      var parser = new Parser();
+      parser.set('all', function() {
+        var pos = this.position();
+        var m = this.match(/^.*/);
+        if (!m) return;
+        return pos({
+          type: 'all',
+          val: m[0]
+        });
+      });
+
+      var ast = parser.parse('a/b');
+      assert.equal(ast.nodes[ast.nodes.length - 1].type, 'eos');
+    });
+  });
+
   describe('.set():', function() {
     it('should register middleware', function() {
       parser.set('all', function() {
@@ -45,6 +81,7 @@ describe('parser', function() {
       parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
+        if (!m) return;
         return pos({
           type: 'all',
           val: m[0]
@@ -60,6 +97,7 @@ describe('parser', function() {
       parser.set('all', function() {
         var pos = this.position();
         var m = this.match(/^.*/);
+        if (!m) return;
         return pos({
           type: 'all',
           val: m[0]
@@ -135,27 +173,24 @@ describe('ast', function() {
         var m = this.match(/^\w/);
         if (!m) return;
         return pos({
-          type: 'text',
           val: m[0]
         });
       });
 
       parser.set('open', function() {
         var pos = this.position();
-        var m = this.match(/^{/);
+        var m = this.match(/^\{/);
         if (!m) return;
         return pos({
-          type: 'open',
           val: m[0]
         });
       });
 
       parser.set('close', function() {
         var pos = this.position();
-        var m = this.match(/^}/);
+        var m = this.match(/^\}/);
         if (!m) return;
         return pos({
-          type: 'close',
           val: m[0]
         });
       });
@@ -165,7 +200,6 @@ describe('ast', function() {
         var m = this.match(/,/);
         if (!m) return;
         return pos({
-          type: 'comma',
           val: m[0]
         });
       });
