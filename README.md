@@ -5,11 +5,11 @@
 <details>
 <summary><strong>Table of Contents</strong></summary>
 - [Install](#install)
-- [Usage examples](#usage-examples)
+- [Quickstart example](#quickstart-example)
 - [Getting started](#getting-started)
-- [Docs](#docs)
-  * [Parser middleware](#parser-middleware)
-- [Renderer middleware](#renderer-middleware)
+  * [Parsing](#parsing)
+- [Compiling](#compiling)
+- [All together](#all-together)
 - [API](#api)
   * [Parse](#parse)
   * [Compile](#compile)
@@ -34,63 +34,90 @@ Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https:/
 
 * Bootstrap your own parser, get sourcemap support for free
 * All parsing and compiling is handled by simple, reusable middleware functions
-* Inspired by the parsers in [pug](http://jade-lang.com) and [css](https://github.com/reworkcss/css).
+* Inspired by the parsers in [pug](https://pugjs.org) and [css](https://github.com/reworkcss/css).
 
-## Usage examples
+## Quickstart example
+
+All of the examples in this document assume the following two lines of setup code exist first:
 
 ```js
 var Snapdragon = require('snapdragon');
 var snapdragon = new Snapdragon();
 ```
 
-**Parse**
+**Parse a string**
 
 ```js
-var ast = snapdragon.parser('some string', options)
-  // parser middleware that can be called by other middleware
+var ast = snapdragon.parser
+  // parser handlers (essentially middleware)
+  // used for parsing substrings to create tokens
   .set('foo', function () {})
-  // parser middleware, runs immediately in the order defined
-  .use(bar())
-  .use(baz())
+  .set('bar', function () {})
+  .parse('some string', options);
 ```
 
-**Render**
+**Compile an AST returned from `.parse()`**
 
 ```js
-// pass the `ast` from the parse method
-var res = snapdragon.compiler(ast)
-  // compiler middleware, called when the name of the middleware
-  // matches the `node.type` (defined in a parser middleware)
+var result = snapdragon.compiler
+  // compiler handlers (essentially middleware), 
+  // called on a node when the `node.type` matches
+  // the name of the handler
+  .set('foo', function () {})
   .set('bar', function () {})
-  .set('baz', function () {})
-  .compile()
+  // pass the `ast` from the parse method
+  .compile(ast)
+
+// the compiled string
+console.log(result.output);
 ```
 
 See the [examples](./examples/).
 
 ## Getting started
 
-**Parsers**
+### Parsing
 
-Parsers are middleware functions used for parsing a string into an ast node.
+**Parser handlers**
+
+Parser handlers are middleware functions responsible for matching substrings to create tokens:
+
+**Example handler**
 
 ```js
-var ast = snapdragon.parser(str, options)
+var ast = snapdragon.parser
   .use(function() {
     var pos = this.position();
     var m = this.match(/^\./);
     if (!m) return;
     return pos({
-      // `type` specifies the compiler to use
+      // the "type" will be used by the compiler later on,
+      // we'll go over this in the compiler docs
       type: 'dot',
+      // "val" is the string captured by ".match",
+      // in this case that would be '.'
       val: m[0]
     });
   })
+  .parse('.'[, options])
 ```
 
-**AST node**
+_As a side node, it's not scrictly required to set the `type` on the token, since the parser will add it to the token if it's undefined, based on the name of the handler. But it's good practice since tokens aren't always returned._
 
-When the parser finds a match, `pos()` is called, pushing a token for that node onto the ast that looks something like:
+**Example token**
+
+And the resulting tokens look something like this:
+
+```js
+{ 
+  type: 'dot',
+  val: '.' 
+}
+```
+
+**Position**
+
+Next, `pos()` is called on the token as it's returned, which patches the token with the `position` of the string that was captured:
 
 ```js
 { type: 'dot',
@@ -100,12 +127,28 @@ When the parser finds a match, `pos()` is called, pushing a token for that node 
      end: { lineno: 1, column: 2 } }}
 ```
 
-**Renderers**
+**Life as an AST node**
 
-Renderers are _named_ middleware functions that visit over an array of ast nodes to compile a string.
+When the token is returned, the parser pushes it onto the `nodes` array of the "previous" node (since we're in a tree, the "previous" node might be literally the last node that was created, or it might be the "parent" node inside a nested context, like when parsing brackets or something with an open or close), at which point the token begins its life as an AST node.
+
+**Wrapping up**
+
+In the parser calls all handlers and cannot find a match for a substring, an error is thrown.
+
+Assuming the parser finished parsing the entire string, an AST is returned.
+
+## Compiling
+
+The compiler's job is to take the AST created by the [parser](#parsing) and convert it to a new string. It does this by iterating over each node on the AST and calling a function on the node based on its `type`.
+
+This function is called a "handler".
+
+**Compiler handlers**
+
+Handlers are _named_ middleware functions that are called on a node when `node.type` matches the name of a registered handler.
 
 ```js
-var res = snapdragon.compiler(ast)
+var result = snapdragon.compiler
   .set('dot', function (node) {
     console.log(node.val)
     //=> '.'
@@ -113,59 +156,44 @@ var res = snapdragon.compiler(ast)
   })
 ```
 
+If `node.type` does not match a registered handler, an error is thrown.
+
 **Source maps**
 
-If you want source map support, make sure to emit the position as well.
+If you want source map support, make sure to emit the entire node as the second argument as well (this allows the compiler to get the `node.position`).
 
 ```js
-var res = snapdragon.compiler(ast)
+var res = snapdragon.compiler
   .set('dot', function (node) {
-    return this.emit(node.val, node.position);
+    return this.emit(node.val, node);
   })
 ```
 
-## Docs
+## All together
 
-### Parser middleware
-
-A parser middleware is a function that returns an abject called a `token`. This token is pushed onto the AST as a node.
-
-**Example token**
+This is a very basic example, but it shows how to parse a dot, then compile it as an escaped dot.
 
 ```js
-{ type: 'dot',
-  val: '.',
-  position:
-   { start: { lineno: 1, column: 1 },
-     end: { lineno: 1, column: 2 } }}
-```
+var Snapdragon = require('..');
+var snapdragon = new Snapdragon();
 
-## Renderer middleware
-
-Renderers are run when the name of the compiler middleware matches the `type` defined on an ast `node` (which is defined in a parser).
-
-**Example**
-
-Exercise: Parse a dot, then compile it as an escaped dot.
-
-```js
-var ast = snapdragon.parser('.')
-  .use(function () {
+var ast = snapdragon.parser
+  .set('dot', function () {
     var pos = this.position();
     var m = this.match(/^\./);
     if (!m) return;
     return pos({
-      // define the `type` of compiler to use
       type: 'dot',
       val: m[0]
     })
   })
+  .parse('.')
 
-var result = snapdragon.compiler(ast)
+var result = snapdragon.compiler
   .set('dot', function (node) {
     return this.emit('\\' + node.val);
   })
-  .compile()
+  .compile(ast)
 
 console.log(result.output);
 //=> '\.'
@@ -173,7 +201,7 @@ console.log(result.output);
 
 ## API
 
-### [Parser](lib/parser.js#L21)
+### [Parser](lib/parser.js#L27)
 
 Create a new `Parser` with the given `input` and `options`.
 
@@ -182,16 +210,35 @@ Create a new `Parser` with the given `input` and `options`.
 * `input` **{String}**
 * `options` **{Object}**
 
+**Example**
+
+```js
+var Snapdragon = require('snapdragon');
+var Parser = Snapdragon.Parser;
+var parser = new Parser();
+```
+
+### [.error](lib/parser.js#L95)
+
 Throw a formatted error message with details including the cursor position.
 
 **Params**
 
 * `msg` **{String}**: Message to use in the Error.
-* `message` **{String}**
 * `node` **{Object}**
 * `returns` **{undefined}**
 
-### [.define](lib/parser.js#L106)
+**Example**
+
+```js
+parser.set('foo', function(node) {
+  if (node.val !== 'foo') {
+    throw this.error('expected node.val to be "foo"', node);
+  }
+});
+```
+
+### [.define](lib/parser.js#L112)
 
 Define a non-enumberable property on the `Parser` instance.
 
@@ -207,6 +254,10 @@ Define a non-enumberable property on the `Parser` instance.
 parser.define('foo', 'bar');
 ```
 
+### [.node](lib/parser.js#L132)
+
+Create a new [Node](#node) at the current string `position`, for the given `val` and `type`.
+
 **Params**
 
 * `position` **{Function}**
@@ -219,6 +270,10 @@ parser.define('foo', 'bar');
 ```js
 compiler.node(compiler.position(), 'slash', '/');
 ```
+
+### [.position](lib/parser.js#L156)
+
+Mark position and patch `node.position`.
 
 **Params**
 
@@ -239,6 +294,10 @@ parser.set('foo', function(node) {
 });
 ```
 
+### [.set](lib/parser.js#L189)
+
+Add parser `type` with the given visitor `fn`.
+
 **Params**
 
 * `type` **{String}**
@@ -256,6 +315,10 @@ parser.set('foo', function(node) {
  });
 ```
 
+### [.get](lib/parser.js#L208)
+
+Get parser `type`.
+
 **Params**
 
 * `type` **{String}**
@@ -265,6 +328,10 @@ parser.set('foo', function(node) {
 ```js
 var fn = parser.get('slash');
 ```
+
+### [.push](lib/parser.js#L232)
+
+Push a node onto the stack for the given `type`.
 
 **Params**
 
@@ -285,6 +352,10 @@ parser.set('all', function() {
 });
 ```
 
+### [.pop](lib/parser.js#L263)
+
+Pop a token off of the stack of the given `type`.
+
 **Params**
 
 * `type` **{String}**
@@ -293,31 +364,46 @@ parser.set('all', function() {
 **Example**
 
 ```js
- parser.set('close', function() {
-   var pos = this.position();
-   var m = this.match(/^\}/);
-   if (!m) return;
+parser.set('close', function() {
+  var pos = this.position();
+  var m = this.match(/^\}/);
+  if (!m) return;
 
-   var node = pos({
-     type: 'close',
-     val: m[0]
-   });
+  var node = pos({
+    type: 'close',
+    val: m[0]
+  });
 
-   this.pop(node.type);
-   return node;
- });
+  this.pop(node.type);
+  return node;
+});
 ```
 
-Return true if inside a "set" of the given `type`. Sets are created
-manually by adding a type to `parser.sets`. A node is "inside" a set
-when an `*.open` node for the given `type` was previously pushed onto the set.
-The type is removed from the set by popping it off when the `*.close`
-node for the given type is reached.
+### [.isInside](lib/parser.js#L293)
+
+Return true if inside a "set" of the given `type`. Sets are created manually by adding a type to `parser.sets`. A node is "inside" a set when an `*.open` node for the given `type` was previously pushed onto the set. The type is removed from the set by popping it off when the `*.close` node for the given type is reached.
 
 **Params**
 
 * `type` **{String}**
 * `returns` **{Boolean}**
+
+**Example**
+
+```js
+parser.set('close', function() {
+  var pos = this.position();
+  var m = this.match(/^\}/);
+  if (!m) return;
+  if (!this.isInside('bracket')) {
+    throw new Error('missing opening bracket');
+  }
+});
+```
+
+### [.isType](lib/parser.js#L310)
+
+Return true if `node` is the given `type`.
 
 **Params**
 
@@ -329,6 +415,45 @@ node for the given type is reached.
 
 ```js
 parser.isType(node, 'brace');
+```
+
+### [.prev](lib/parser.js#L326)
+
+Get the previous AST node from the `parser.stack` (when inside a nested context) or `parser.nodes`.
+
+* `returns` **{Object}**
+
+**Example**
+
+```js
+var prev = this.prev();
+```
+
+### [.prev](lib/parser.js#L366)
+
+Match `regex`, return captures, and update the cursor position by `match[0]` length.
+
+**Params**
+
+* `regex` **{RegExp}**
+* `returns` **{Object}**
+
+**Example**
+
+```js
+// make sure to use the starting regex boundary: "^"
+var match = this.match(/^\./);
+```
+
+**Params**
+
+* `input` **{String}**
+* `returns` **{Object}**: Returns an AST with `ast.nodes`
+
+**Example**
+
+```js
+var ast = parser.parse('foo/bar');
 ```
 
 ### [Compiler](lib/compiler.js#L22)
@@ -348,14 +473,29 @@ var Compiler = Snapdragon.Compiler;
 var compiler = new Compiler();
 ```
 
+### [.error](lib/compiler.js#L62)
+
 Throw a formatted error message with details including the cursor position.
 
 **Params**
 
 * `msg` **{String}**: Message to use in the Error.
-* `message` **{String}**
 * `node` **{Object}**
 * `returns` **{undefined}**
+
+**Example**
+
+```js
+compiler.set('foo', function(node) {
+  if (node.val !== 'foo') {
+    throw this.error('expected node.val to be "foo"', node);
+  }
+});
+```
+
+### [.emit](lib/compiler.js#L81)
+
+Concat the given string to `compiler.output`.
 
 **Params**
 
@@ -371,6 +511,10 @@ compiler.set('foo', function(node) {
 });
 ```
 
+### [.noop](lib/compiler.js#L99)
+
+Emit an empty string to effectively "skip" the string for the given `node`, but still emit the position and node type.
+
 **Params**
 
 * **{Object}**: node
@@ -382,7 +526,7 @@ compiler.set('foo', function(node) {
 snapdragon.compiler.set('bos', compiler.noop);
 ```
 
-### [.define](lib/compiler.js#L117)
+### [.define](lib/compiler.js#L119)
 
 Define a non-enumberable property on the `Compiler` instance. Useful in pluggins for adding methods to an
 
@@ -399,6 +543,10 @@ compiler.define('customMethod', function() {
   // do stuff
 });
 ```
+
+### [.set](lib/compiler.js#L147)
+
+Add a compiler `fn` for the given `type`. Compilers are called when the `.compile` method encounters a node of the given type to generate the output string.
 
 **Params**
 
@@ -420,6 +568,10 @@ compiler
   });
 ```
 
+### [.get](lib/compiler.js#L163)
+
+Get the compiler of the given `type`.
+
 **Params**
 
 * `type` **{String}**
@@ -429,6 +581,10 @@ compiler
 ```js
 var fn = compiler.get('slash');
 ```
+
+### [.visit](lib/compiler.js#L183)
+
+Visit `node` using the registered compiler function associated with the `node.type`.
 
 **Params**
 
@@ -444,6 +600,10 @@ compiler
   })
 ```
 
+### [.mapVisit](lib/compiler.js#L206)
+
+Iterate over `node.nodes`, calling [visit](#visit) on each node.
+
 **Params**
 
 * `node` **{Object}**
@@ -457,6 +617,10 @@ compiler
     utils.mapVisit(node);
   })
 ```
+
+### [.compile](lib/compiler.js#L231)
+
+Compile the given `AST` and return a string. Iterates over `ast.nodes` with [mapVisit](#mapVisit).
 
 **Params**
 
@@ -518,17 +682,17 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 111 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 125 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 2 | [doowb](https://github.com/doowb) |
 
 ### Building docs
 
-_(This document was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+_(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
 
-To generate the readme and API documentation with [verb](https://github.com/verbose/verb):
+To generate the readme, run the following command:
 
 ```sh
-$ npm install -g verb verb-generate-readme && verb
+$ npm install -g verbose/verb#dev verb-generate-readme && verb
 ```
 
 ### Running tests
@@ -536,7 +700,7 @@ $ npm install -g verb verb-generate-readme && verb
 Install dev dependencies:
 
 ```sh
-$ npm install -d && npm test
+$ npm install && npm test
 ```
 
 ### Author
@@ -549,8 +713,8 @@ $ npm install -d && npm test
 ### License
 
 Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](LICENSE).
+MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.1, on January 21, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 02, 2017._
