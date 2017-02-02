@@ -238,9 +238,9 @@ parser.set('foo', function(node) {
 });
 ```
 
-### [.define](lib/parser.js#L112)
+### [.define](lib/parser.js#L113)
 
-Define a non-enumberable property on the `Parser` instance.
+Define a non-enumberable property on the `Parser` instance. This is useful in plugins, for exposing methods inside handlers.
 
 **Params**
 
@@ -254,7 +254,7 @@ Define a non-enumberable property on the `Parser` instance.
 parser.define('foo', 'bar');
 ```
 
-### [.node](lib/parser.js#L132)
+### [.node](lib/parser.js#L133)
 
 Create a new [Node](#node) at the current string `position`, for the given `val` and `type`.
 
@@ -271,7 +271,7 @@ Create a new [Node](#node) at the current string `position`, for the given `val`
 compiler.node(compiler.position(), 'slash', '/');
 ```
 
-### [.position](lib/parser.js#L156)
+### [.position](lib/parser.js#L157)
 
 Mark position and patch `node.position`.
 
@@ -294,7 +294,7 @@ parser.set('foo', function(node) {
 });
 ```
 
-### [.set](lib/parser.js#L189)
+### [.set](lib/parser.js#L190)
 
 Add parser `type` with the given visitor `fn`.
 
@@ -315,7 +315,7 @@ Add parser `type` with the given visitor `fn`.
  });
 ```
 
-### [.get](lib/parser.js#L208)
+### [.get](lib/parser.js#L209)
 
 Get parser `type`.
 
@@ -329,7 +329,7 @@ Get parser `type`.
 var fn = parser.get('slash');
 ```
 
-### [.push](lib/parser.js#L232)
+### [.push](lib/parser.js#L233)
 
 Push a node onto the stack for the given `type`.
 
@@ -352,7 +352,7 @@ parser.set('all', function() {
 });
 ```
 
-### [.pop](lib/parser.js#L263)
+### [.pop](lib/parser.js#L264)
 
 Pop a token off of the stack of the given `type`.
 
@@ -379,7 +379,7 @@ parser.set('close', function() {
 });
 ```
 
-### [.isInside](lib/parser.js#L293)
+### [.isInside](lib/parser.js#L294)
 
 Return true if inside a "set" of the given `type`. Sets are created manually by adding a type to `parser.sets`. A node is "inside" a set when an `*.open` node for the given `type` was previously pushed onto the set. The type is removed from the set by popping it off when the `*.close` node for the given type is reached.
 
@@ -401,7 +401,7 @@ parser.set('close', function() {
 });
 ```
 
-### [.isType](lib/parser.js#L310)
+### [.isType](lib/parser.js#L311)
 
 Return true if `node` is the given `type`.
 
@@ -417,7 +417,7 @@ Return true if `node` is the given `type`.
 parser.isType(node, 'brace');
 ```
 
-### [.prev](lib/parser.js#L326)
+### [.prev](lib/parser.js#L327)
 
 Get the previous AST node from the `parser.stack` (when inside a nested context) or `parser.nodes`.
 
@@ -429,7 +429,7 @@ Get the previous AST node from the `parser.stack` (when inside a nested context)
 var prev = this.prev();
 ```
 
-### [.prev](lib/parser.js#L366)
+### [.prev](lib/parser.js#L367)
 
 Match `regex`, return captures, and update the cursor position by `match[0]` length.
 
@@ -528,7 +528,7 @@ snapdragon.compiler.set('bos', compiler.noop);
 
 ### [.define](lib/compiler.js#L119)
 
-Define a non-enumberable property on the `Compiler` instance. Useful in pluggins for adding methods to an
+Define a non-enumberable property on the `Compiler` instance. This is useful in plugins, for exposing methods inside handlers.
 
 **Params**
 
