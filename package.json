@@ -26,12 +26,12 @@
   },
   "dependencies": {
     "base": "^0.11.1",
-    "debug": "^2.2.0",
+    "debug": "^2.6.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
     "isobject": "^3.0.0",
     "map-cache": "^0.2.2",
-    "snapdragon-node": "^1.0.0",
+    "snapdragon-node": "^1.0.3",
     "source-map": "^0.5.6",
     "source-map-resolve": "^0.5.0",
     "use": "^2.0.0"
@@ -39,14 +39,14 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
-    "gulp-format-md": "^0.1.10",
+    "gulp-format-md": "^0.1.11",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
-    "gulp-unused": "^0.2.0",
-    "mocha": "^3.0.2",
+    "gulp-unused": "^0.2.1",
+    "mocha": "^3.2.0",
     "snapdragon-capture": "^0.1.0",
-    "snapdragon-capture-set": "^1.0.0",
-    "verb-generate-readme": "^0.4.1"
+    "snapdragon-capture-set": "^1.0.1",
+    "verb-generate-readme": "^0.4.2"
   },
   "keywords": [
     "lexer",
@@ -71,9 +71,9 @@
       ],
       "list": [
         "snapdragon-capture",
+        "snapdragon-capture-set",
         "snapdragon-node",
-        "snapdragon-util",
-        "snapdragon-capture-set"
+        "snapdragon-util"
       ]
     },
     "lint": {
