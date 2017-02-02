@@ -86,7 +86,7 @@ Parser handlers are middleware functions responsible for matching substrings to 
 
 ```js
 var ast = snapdragon.parser
-  .use(function() {
+  .set('dot', function() {
     var pos = this.position();
     var m = this.match(/^\./);
     if (!m) return;
@@ -682,7 +682,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 125 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 128 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 2 | [doowb](https://github.com/doowb) |
 
 ### Building docs
