@@ -64,10 +64,12 @@
     "related": {
       "description": "A few of the libraries that use snapdragon:",
       "implementations": [
+        "breakdance",
         "braces",
         "expand-brackets",
         "extglob",
-        "micromatch"
+        "micromatch",
+        "nanomatch"
       ],
       "list": [
         "snapdragon-capture",
