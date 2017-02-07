@@ -36,7 +36,7 @@ describe('compiler', function() {
         cb(new Error('expected an error'));
       } catch (err) {
         assert(err);
-        assert.equal(err.message, 'string <line:1 column:1>: compiler "text" is not registered');
+        assert.equal(err.message, 'string <line:1 column:2>: compiler "text" is not registered');
         cb();
       }
     });
