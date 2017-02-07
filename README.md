@@ -198,7 +198,7 @@ console.log(result.output);
 
 ## API
 
-### [Parser](lib/parser.js#L27)
+### [Parser](lib/parser.js#L28)
 
 Create a new `Parser` with the given `input` and `options`.
 
@@ -215,7 +215,7 @@ var Parser = Snapdragon.Parser;
 var parser = new Parser();
 ```
 
-### [.error](lib/parser.js#L95)
+### [.error](lib/parser.js#L96)
 
 Throw a formatted error message with details including the cursor position.
 
@@ -235,7 +235,7 @@ parser.set('foo', function(node) {
 });
 ```
 
-### [.define](lib/parser.js#L113)
+### [.define](lib/parser.js#L114)
 
 Define a non-enumberable property on the `Parser` instance. This is useful in plugins, for exposing methods inside handlers.
 
@@ -251,13 +251,12 @@ Define a non-enumberable property on the `Parser` instance. This is useful in pl
 parser.define('foo', 'bar');
 ```
 
-### [.node](lib/parser.js#L133)
+### [.node](lib/parser.js#L132)
 
-Create a new [Node](#node) at the current string `position`, for the given `val` and `type`.
+Create a new [Node](#node) with the given `val` and `type`.
 
 **Params**
 
-* `position` **{Function}**
 * `val` **{Object}**
 * `type` **{String}**
 * `returns` **{Object}**: returns the [Node](#node) instance.
@@ -265,18 +264,14 @@ Create a new [Node](#node) at the current string `position`, for the given `val`
 **Example**
 
 ```js
-compiler.node(compiler.position(), 'slash', '/');
+parser.node('/', 'slash');
 ```
 
-### [.position](lib/parser.js#L157)
+### [.position](lib/parser.js#L154)
 
 Mark position and patch `node.position`.
 
-**Params**
-
-* `message` **{String}**
-* `node` **{Object}**
-* `returns` **{undefined}**
+* `returns` **{Function}**: Returns a function that takes a `node`
 
 **Example**
 
@@ -285,13 +280,13 @@ parser.set('foo', function(node) {
   var pos = this.position();
   var match = this.match(/foo/);
   if (match) {
-    // pass `pos` to `this.node` to patch position
-    return this.node(pos, match[0]);
+    // call `pos` with the node
+    return pos(this.node(match[0]));
   }
 });
 ```
 
-### [.set](lib/parser.js#L190)
+### [.set](lib/parser.js#L186)
 
 Add parser `type` with the given visitor `fn`.
 
@@ -304,15 +299,14 @@ Add parser `type` with the given visitor `fn`.
 
 ```js
  parser.set('all', function() {
-   var pos = this.position();
    var match = this.match(/^./);
    if (match) {
-     return this.node(pos, match[0]);
+     return this.node(match[0]);
    }
  });
 ```
 
-### [.get](lib/parser.js#L209)
+### [.get](lib/parser.js#L205)
 
 Get parser `type`.
 
@@ -326,7 +320,7 @@ Get parser `type`.
 var fn = parser.get('slash');
 ```
 
-### [.push](lib/parser.js#L233)
+### [.push](lib/parser.js#L228)
 
 Push a node onto the stack for the given `type`.
 
@@ -339,17 +333,16 @@ Push a node onto the stack for the given `type`.
 
 ```js
 parser.set('all', function() {
-  var pos = this.position();
   var match = this.match(/^./);
   if (match) {
-    var node = this.node(pos, match[0]);
+    var node = this.node(match[0]);
     this.push(node);
     return node;
   }
 });
 ```
 
-### [.pop](lib/parser.js#L264)
+### [.pop](lib/parser.js#L258)
 
 Pop a token off of the stack of the given `type`.
 
@@ -362,21 +355,20 @@ Pop a token off of the stack of the given `type`.
 
 ```js
 parser.set('close', function() {
-  var pos = this.position();
-  var m = this.match(/^\}/);
-  if (!m) return;
+  var match = this.match(/^\}/);
+  if (match) {
+    var node = this.node({
+      type: 'close',
+      val: match[0]
+    });
 
-  var node = pos({
-    type: 'close',
-    val: m[0]
-  });
-
-  this.pop(node.type);
-  return node;
+    this.pop(node.type);
+    return node;
+  }
 });
 ```
 
-### [.isInside](lib/parser.js#L294)
+### [.isInside](lib/parser.js#L288)
 
 Return true if inside a "set" of the given `type`. Sets are created manually by adding a type to `parser.sets`. A node is "inside" a set when an `*.open` node for the given `type` was previously pushed onto the set. The type is removed from the set by popping it off when the `*.close` node for the given type is reached.
 
@@ -398,7 +390,7 @@ parser.set('close', function() {
 });
 ```
 
-### [.isType](lib/parser.js#L311)
+### [.isType](lib/parser.js#L305)
 
 Return true if `node` is the given `type`.
 
@@ -414,7 +406,7 @@ Return true if `node` is the given `type`.
 parser.isType(node, 'brace');
 ```
 
-### [.prev](lib/parser.js#L327)
+### [.prev](lib/parser.js#L321)
 
 Get the previous AST node from the `parser.stack` (when inside a nested context) or `parser.nodes`.
 
@@ -426,7 +418,7 @@ Get the previous AST node from the `parser.stack` (when inside a nested context)
 var prev = this.prev();
 ```
 
-### [.prev](lib/parser.js#L367)
+### [.prev](lib/parser.js#L375)
 
 Match `regex`, return captures, and update the cursor position by `match[0]` length.
 
@@ -681,7 +673,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 130 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 132 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 2 | [doowb](https://github.com/doowb) |
 
 ### Building docs
@@ -716,4 +708,4 @@ MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 03, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 07, 2017._
