@@ -5,7 +5,7 @@
   "homepage": "https://github.com/jonschlinkert/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
-    "Brian Woodward <brian.woodward@gmail.com> (https://github.com/doowb)",
+    "Brian Woodward <brian.woodward@gmail.com> (https://twitter.com/doowb)",
     "Jon Schlinkert <jon.schlinkert@sellside.com> (http://twitter.com/jonschlinkert)"
   ],
   "repository": "jonschlinkert/snapdragon",
@@ -15,7 +15,8 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib"
+    "lib",
+    "verbfile.js"
   ],
   "main": "index.js",
   "engines": {
@@ -25,18 +26,18 @@
     "test": "mocha"
   },
   "dependencies": {
-    "base": "^0.11.1",
     "component-emitter": "^1.2.1",
-    "debug": "^2.6.0",
+    "debug": "^2.6.2",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
     "get-value": "^2.0.6",
     "isobject": "^3.0.0",
     "map-cache": "^0.2.2",
-    "snapdragon-node": "^1.0.5",
+    "snapdragon-node": "^1.0.6",
+    "snapdragon-util": "^2.1.1",
     "source-map": "^0.5.6",
     "source-map-resolve": "^0.5.0",
-    "use": "^2.0.0"
+    "use": "^2.0.2"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -46,9 +47,9 @@
     "gulp-mocha": "^3.0.1",
     "gulp-unused": "^0.2.1",
     "mocha": "^3.2.0",
-    "snapdragon-capture": "^0.1.0",
+    "snapdragon-capture": "^0.2.0",
     "snapdragon-capture-set": "^1.0.1",
-    "verb-generate-readme": "^0.4.2"
+    "verb-generate-readme": "^0.4.3"
   },
   "keywords": [
     "lexer",
