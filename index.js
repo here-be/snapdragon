@@ -1,10 +1,9 @@
 'use strict';
 
-var Base = require('base');
 var define = require('define-property');
+var extend = require('extend-shallow');
 var Compiler = require('./lib/compiler');
 var Parser = require('./lib/parser');
-var utils = require('./lib/utils');
 
 /**
  * Create a new instance of `Snapdragon` with the given `options`.
@@ -13,15 +12,25 @@ var utils = require('./lib/utils');
  * var Snapdragon = require('snapdragon');
  * var snapdragon = new Snapdragon();
  * ```
- *
  * @param {Object} `options`
  * @api public
  */
 
 function Snapdragon(options) {
-  Base.call(this, null, options);
+  if (typeof options === 'string') {
+    var protoa = Object.create(Snapdragon.prototype);
+    Snapdragon.call(protoa);
+    return protoa.render.apply(protoa, arguments);
+  }
+
+  if (!(this instanceof Snapdragon)) {
+    var protob = Object.create(Snapdragon.prototype);
+    Snapdragon.call(protob);
+    return protob;
+  }
+
   this.define('cache', {});
-  this.options = utils.extend({source: 'string'}, this.options);
+  this.options = extend({source: 'string'}, this.options);
   this.isSnapdragon = true;
   this.plugins = {
     fns: [],
@@ -31,12 +40,6 @@ function Snapdragon(options) {
     after: {}
   };
 }
-
-/**
- * Inherit Base
- */
-
-Base.extend(Snapdragon);
 
 /**
  * Register a plugin `fn`.
@@ -59,6 +62,34 @@ Snapdragon.prototype.use = function(fn) {
 };
 
 /**
+ * Define a non-enumerable property or method on the Snapdragon instance.
+ * Useful in plugins for adding convenience methods that can be used in
+ * nodes.
+ *
+ * ```js
+ * snapdraong.define('isTypeFoo', function(node) {
+ *   return node.type === 'foo';
+ * });
+ *
+ * // inside a handler
+ * snapdragon.set('razzle-dazzle', function(node) {
+ *   if (this.isTypeFoo(node.parent)) {
+ *     // do stuff
+ *   }
+ * });
+ * ```
+ * @param {String} `name` Name of the property or method being defined
+ * @param {any} `val` Property value
+ * @return {Object} Returns the instance for chaining.
+ * @api public
+ */
+
+Snapdragon.prototype.define = function(key, val) {
+  define(this, key, val);
+  return this;
+};
+
+/**
  * Parse the given `str` and return an AST.
  *
  * ```js
@@ -73,9 +104,9 @@ Snapdragon.prototype.use = function(fn) {
  */
 
 Snapdragon.prototype.parse = function(str, options) {
-  var opts = utils.extend({}, this.options, options);
+  var opts = extend({}, this.options, options);
   var ast = this.parser.parse(str, opts);
-  // add non-enumerable reference to the parser instance
+  // add non-enumerable parser reference to AST
   define(ast, 'parser', this.parser);
   return ast;
 };
@@ -96,11 +127,8 @@ Snapdragon.prototype.parse = function(str, options) {
  */
 
 Snapdragon.prototype.compile = function(ast, options) {
-  var opts = utils.extend({}, this.options, options);
-  var compiled = this.compiler.compile(ast, opts);
-  // add non-enumerable reference to the compiler instance
-  define(compiled, 'compiler', this.compiler);
-  return compiled;
+  var opts = extend({}, this.options, options);
+  return this.compiler.compile(ast, opts);
 };
 
 /**
@@ -122,8 +150,7 @@ Snapdragon.prototype.render = function(ast, options) {
   if (typeof ast === 'string') {
     ast = this.parse(ast, options);
   }
-  var compiled = this.compile(ast, options);
-  return compiled.output;
+  return this.compile(ast, options).output;
 };
 
 /**
@@ -132,14 +159,15 @@ Snapdragon.prototype.render = function(ast, options) {
  */
 
 Object.defineProperty(Snapdragon.prototype, 'compiler', {
+  configurable: true,
   set: function(val) {
     this.cache.compiler = val;
   },
   get: function() {
-    if (this.cache.compiler) {
-      return this.cache.compiler;
+    if (!this.cache.compiler) {
+      this.cache.compiler = new Compiler(this.options);
     }
-    return (this.cache.compiler = new Compiler(this.options));
+    return this.cache.compiler;
   }
 });
 
@@ -149,14 +177,15 @@ Object.defineProperty(Snapdragon.prototype, 'compiler', {
  */
 
 Object.defineProperty(Snapdragon.prototype, 'parser', {
+  configurable: true,
   set: function(val) {
     this.cache.parser = val;
   },
   get: function() {
-    if (this.cache.parser) {
-      return this.cache.parser;
+    if (!this.cache.parser) {
+      this.cache.parser = new Parser(this.options);
     }
-    return (this.cache.parser = new Parser(this.options));
+    return this.cache.parser;
   }
 });
 
@@ -194,14 +223,14 @@ Object.defineProperty(Snapdragon.prototype, 'regex', {
 });
 
 /**
+ * Expose `Parser` and `Compiler`
+ */
+
+Snapdragon.Compiler = Compiler;
+Snapdragon.Parser = Parser;
+
+/**
  * Expose `Snapdragon`
  */
 
 module.exports = Snapdragon;
-
-/**
- * Expose `Parser` and `Compiler`
- */
-
-module.exports.Compiler = Compiler;
-module.exports.Parser = Parser;
