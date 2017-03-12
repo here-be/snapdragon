@@ -1,8 +1,6 @@
-# Snapdragon parser
+WIP (draft)
 
-The following documentation is split into two sections, one for users and one for developers. The user documentation is API-focused, and the developer documentation explores how the Snapdragon parser works "under the hood".
-
-Feel free to jump around and please [let us know](../../issues) if you find any typos, outdated or incorrect information. Pull requests are always welcome as well!
+# Parsing with snapdragon
 
 <details>
 <summary><strong>Pre-requisites</strong></summary>

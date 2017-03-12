@@ -1,4 +1,4 @@
-# Compiler
+# Compiling with snapdragon
 
 <details>
 <summary><strong>Pre-requisites</strong></summary>

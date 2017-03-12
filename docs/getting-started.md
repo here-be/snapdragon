@@ -10,7 +10,6 @@ WIP (draft)
 - Basic usage
 - Next steps
 
-
 ## Installing snapdragon
 
 ## Usage documentation

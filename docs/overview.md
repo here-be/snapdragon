@@ -13,8 +13,6 @@ At its heart, snapdragon does two things:
 
 **Plugins**
 
-
-
 ## What can snapdragon do?
 
 You can use snapdragon to parse and convert a string into something entirely different, or use it to create "formatters" for beautifying code or plain text.
@@ -31,10 +29,10 @@ Here's how some real projects are using snapdragon:
 
 ## About
 
-Snapdragon was created by, [Jon Schlinkert]({%= author.url %}), author of [assemble][], [generate][], [update][], [micromatch][], [remarkable][] and many other node.js projects.
+Snapdragon was created by, [Jon Schlinkert](https://github.com/jonschlinkert), author of [assemble][], [generate][], [update][], [micromatch][], [remarkable][] and many other node.js projects.
 
 If you'd like to learn more about me or my projects, or you want to get in touch, please feel free to:
 
-- follow me on [github]({%= author.twitter %}) for notifications and updates about my github projects
-- follow me on [twitter]({%= author.twitter %})
+- follow me on [github](jonschlinkert) for notifications and updates about my github projects
+- follow me on [twitter](jonschlinkert)
 - connect with me on [linkedin](https://www.linkedin.com/in/jonschlinkert)
