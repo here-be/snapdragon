@@ -198,7 +198,7 @@ console.log(result.output);
 
 ## API
 
-### [Parser](lib/parser.js#L28)
+### [Parser](lib/parser.js#L27)
 
 Create a new `Parser` with the given `input` and `options`.
 
@@ -215,7 +215,7 @@ var Parser = Snapdragon.Parser;
 var parser = new Parser();
 ```
 
-### [.error](lib/parser.js#L96)
+### [.error](lib/parser.js#L94)
 
 Throw a formatted error message with details including the cursor position.
 
@@ -235,7 +235,7 @@ parser.set('foo', function(node) {
 });
 ```
 
-### [.define](lib/parser.js#L114)
+### [.define](lib/parser.js#L112)
 
 Define a non-enumberable property on the `Parser` instance. This is useful in plugins, for exposing methods inside handlers.
 
@@ -251,7 +251,7 @@ Define a non-enumberable property on the `Parser` instance. This is useful in pl
 parser.define('foo', 'bar');
 ```
 
-### [.node](lib/parser.js#L132)
+### [.node](lib/parser.js#L130)
 
 Create a new [Node](#node) with the given `val` and `type`.
 
@@ -267,7 +267,7 @@ Create a new [Node](#node) with the given `val` and `type`.
 parser.node('/', 'slash');
 ```
 
-### [.position](lib/parser.js#L154)
+### [.position](lib/parser.js#L152)
 
 Mark position and patch `node.position`.
 
@@ -286,7 +286,7 @@ parser.set('foo', function(node) {
 });
 ```
 
-### [.set](lib/parser.js#L186)
+### [.set](lib/parser.js#L184)
 
 Add parser `type` with the given visitor `fn`.
 
@@ -306,7 +306,7 @@ Add parser `type` with the given visitor `fn`.
  });
 ```
 
-### [.get](lib/parser.js#L205)
+### [.get](lib/parser.js#L203)
 
 Get parser `type`.
 
@@ -320,7 +320,7 @@ Get parser `type`.
 var fn = parser.get('slash');
 ```
 
-### [.push](lib/parser.js#L228)
+### [.push](lib/parser.js#L226)
 
 Push a node onto the stack for the given `type`.
 
@@ -342,7 +342,7 @@ parser.set('all', function() {
 });
 ```
 
-### [.pop](lib/parser.js#L258)
+### [.pop](lib/parser.js#L256)
 
 Pop a token off of the stack of the given `type`.
 
@@ -368,7 +368,7 @@ parser.set('close', function() {
 });
 ```
 
-### [.isInside](lib/parser.js#L288)
+### [.isInside](lib/parser.js#L286)
 
 Return true if inside a "set" of the given `type`. Sets are created manually by adding a type to `parser.sets`. A node is "inside" a set when an `*.open` node for the given `type` was previously pushed onto the set. The type is removed from the set by popping it off when the `*.close` node for the given type is reached.
 
@@ -390,7 +390,7 @@ parser.set('close', function() {
 });
 ```
 
-### [.isType](lib/parser.js#L305)
+### [.isType](lib/parser.js#L303)
 
 Return true if `node` is the given `type`.
 
@@ -406,7 +406,7 @@ Return true if `node` is the given `type`.
 parser.isType(node, 'brace');
 ```
 
-### [.prev](lib/parser.js#L321)
+### [.prev](lib/parser.js#L319)
 
 Get the previous AST node from the `parser.stack` (when inside a nested context) or `parser.nodes`.
 
@@ -418,7 +418,7 @@ Get the previous AST node from the `parser.stack` (when inside a nested context)
 var prev = this.prev();
 ```
 
-### [.prev](lib/parser.js#L375)
+### [.prev](lib/parser.js#L373)
 
 Match `regex`, return captures, and update the cursor position by `match[0]` length.
 
@@ -445,7 +445,7 @@ var match = this.match(/^\./);
 var ast = parser.parse('foo/bar');
 ```
 
-### [Compiler](lib/compiler.js#L22)
+### [Compiler](lib/compiler.js#L24)
 
 Create a new `Compiler` with the given `options`.
 
@@ -462,7 +462,7 @@ var Compiler = Snapdragon.Compiler;
 var compiler = new Compiler();
 ```
 
-### [.error](lib/compiler.js#L62)
+### [.error](lib/compiler.js#L67)
 
 Throw a formatted error message with details including the cursor position.
 
@@ -482,7 +482,7 @@ compiler.set('foo', function(node) {
 });
 ```
 
-### [.emit](lib/compiler.js#L81)
+### [.emit](lib/compiler.js#L86)
 
 Concat the given string to `compiler.output`.
 
@@ -500,7 +500,7 @@ compiler.set('foo', function(node) {
 });
 ```
 
-### [.noop](lib/compiler.js#L99)
+### [.noop](lib/compiler.js#L104)
 
 Emit an empty string to effectively "skip" the string for the given `node`, but still emit the position and node type.
 
@@ -515,7 +515,7 @@ Emit an empty string to effectively "skip" the string for the given `node`, but 
 snapdragon.compiler.set('bos', compiler.noop);
 ```
 
-### [.define](lib/compiler.js#L119)
+### [.define](lib/compiler.js#L124)
 
 Define a non-enumberable property on the `Compiler` instance. This is useful in plugins, for exposing methods inside handlers.
 
@@ -533,7 +533,7 @@ compiler.define('customMethod', function() {
 });
 ```
 
-### [.set](lib/compiler.js#L147)
+### [.set](lib/compiler.js#L152)
 
 Add a compiler `fn` for the given `type`. Compilers are called when the `.compile` method encounters a node of the given type to generate the output string.
 
@@ -557,7 +557,7 @@ compiler
   });
 ```
 
-### [.get](lib/compiler.js#L163)
+### [.get](lib/compiler.js#L168)
 
 Get the compiler of the given `type`.
 
@@ -571,7 +571,7 @@ Get the compiler of the given `type`.
 var fn = compiler.get('slash');
 ```
 
-### [.visit](lib/compiler.js#L183)
+### [.visit](lib/compiler.js#L188)
 
 Visit `node` using the registered compiler function associated with the `node.type`.
 
@@ -589,7 +589,7 @@ compiler
   })
 ```
 
-### [.mapVisit](lib/compiler.js#L206)
+### [.mapVisit](lib/compiler.js#L226)
 
 Iterate over `node.nodes`, calling [visit](#visit) on each node.
 
@@ -607,7 +607,7 @@ compiler
   })
 ```
 
-### [.compile](lib/compiler.js#L231)
+### [.compile](lib/compiler.js#L250)
 
 Compile the given `AST` and return a string. Iterates over `ast.nodes` with [mapVisit](#mapVisit).
 
@@ -673,7 +673,7 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 | **Commits** | **Contributor** | 
 | --- | --- |
-| 136 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 139 | [jonschlinkert](https://github.com/jonschlinkert) |
 | 2 | [doowb](https://github.com/doowb) |
 
 ### Building docs
@@ -708,4 +708,4 @@ MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on February 08, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on March 12, 2017._
