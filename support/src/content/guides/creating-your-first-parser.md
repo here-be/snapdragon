@@ -117,7 +117,7 @@ Error: string <line:1 column:1>: no parser for: "foo/*.js
 
 There are a few important bits of information in this message:
 
-- `line:1 column: 1` tells us where in the input string this is happening. It's no suprise that we're getting an error on the very first character of our string.
+- `line:1 column: 1` tells us where in the input string this is happening. It's no surprise that we're getting an error on the very first character of our string.
 - `no parser for:` tells us that no "parsers" are registered for the substring that follows in the error message.
 
 
