@@ -2,16 +2,16 @@
   "name": "snapdragon",
   "description": "Easy-to-use plugin system for creating powerful, fast and versatile parsers and compilers, with built-in source-map support.",
   "version": "0.11.1",
-  "homepage": "https://github.com/jonschlinkert/snapdragon",
+  "homepage": "https://github.com/here-be/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
     "Brian Woodward (https://twitter.com/doowb)",
     "Daniel Tschinder (https://github.com/danez)",
     "Jon Schlinkert (http://twitter.com/jonschlinkert)"
   ],
-  "repository": "jonschlinkert/snapdragon",
+  "repository": "here-be/snapdragon",
   "bugs": {
-    "url": "https://github.com/jonschlinkert/snapdragon/issues"
+    "url": "https://github.com/here-be/snapdragon/issues"
   },
   "license": "MIT",
   "files": [
