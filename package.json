@@ -37,7 +37,7 @@
     "snapdragon-util": "^2.1.1",
     "source-map": "^0.5.6",
     "source-map-resolve": "^0.5.0",
-    "use": "^2.0.2"
+    "use": "^3.1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
