@@ -33,6 +33,6 @@ Snapdragon was created by, [Jon Schlinkert](https://github.com/jonschlinkert), a
 
 If you'd like to learn more about me or my projects, or you want to get in touch, please feel free to:
 
-- follow me on [github](jonschlinkert) for notifications and updates about my github projects
-- follow me on [twitter](jonschlinkert)
+- follow me on [github]() for notifications and updates about my github projects
+- follow me on [twitter]()
 - connect with me on [linkedin](https://www.linkedin.com/in/jonschlinkert)

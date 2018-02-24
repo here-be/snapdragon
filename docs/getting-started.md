@@ -4,8 +4,6 @@ WIP (draft)
 
 [What is snapdragon, and who created it?](overview.html)
 
-## Table of contents
-
 - Installing snapdragon
 - Basic usage
 - Next steps
