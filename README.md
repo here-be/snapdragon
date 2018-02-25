@@ -1,9 +1,13 @@
-# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM monthly downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon)  [![NPM total downloads](https://img.shields.io/npm/dt/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/snapdragon)
+# snapdragon [![NPM version](https://img.shields.io/npm/v/snapdragon.svg?style=flat)](https://www.npmjs.com/package/snapdragon) [![NPM monthly downloads](https://img.shields.io/npm/dm/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![NPM total downloads](https://img.shields.io/npm/dt/snapdragon.svg?style=flat)](https://npmjs.org/package/snapdragon) [![Linux Build Status](https://img.shields.io/travis/here-be/snapdragon.svg?style=flat&label=Travis)](https://travis-ci.org/here-be/snapdragon)
 
 > Easy-to-use plugin system for creating powerful, fast and versatile parsers and compilers, with built-in source-map support.
 
+Please consider following this project's author, [Jon Schlinkert](https://github.com/jonschlinkert), and consider starring the project to show your :heart: and support.
+
+## Table of Contents
+
 <details>
-<summary><strong>Table of Contents</strong></summary>
+<summary><strong>Details</strong></summary>
 
 - [Install](#install)
 - [Quickstart example](#quickstart-example)
@@ -27,12 +31,6 @@ Install with [npm](https://www.npmjs.com/):
 
 ```sh
 $ npm install --save snapdragon
-```
-
-Install with [yarn](https://yarnpkg.com):
-
-```sh
-$ yarn add snapdragon
 ```
 
 Created by [jonschlinkert](https://github.com/jonschlinkert) and [doowb](https://github.com/doowb).
@@ -636,12 +634,12 @@ var str = compiler.compile(ast);
 
 A few of the libraries that use snapdragon:
 
-* [braces](https://www.npmjs.com/package/braces): Fast, comprehensive, bash-like brace expansion implemented in JavaScript. Complete support for the Bash 4.3 braces… [more](https://github.com/jonschlinkert/braces) | [homepage](https://github.com/jonschlinkert/braces "Fast, comprehensive, bash-like brace expansion implemented in JavaScript. Complete support for the Bash 4.3 braces specification, without sacrificing speed.")
+* [braces](https://www.npmjs.com/package/braces): Bash-like brace expansion, implemented in JavaScript. Safer than other brace expansion libs, with complete support… [more](https://github.com/micromatch/braces) | [homepage](https://github.com/micromatch/braces "Bash-like brace expansion, implemented in JavaScript. Safer than other brace expansion libs, with complete support for the Bash 4.3 braces specification, without sacrificing speed.")
 * [breakdance](https://www.npmjs.com/package/breakdance): Breakdance is a node.js library for converting HTML to markdown. Highly pluggable, flexible and easy… [more](http://breakdance.io) | [homepage](http://breakdance.io "Breakdance is a node.js library for converting HTML to markdown. Highly pluggable, flexible and easy to use. It's time for your markup to get down.")
 * [expand-brackets](https://www.npmjs.com/package/expand-brackets): Expand POSIX bracket expressions (character classes) in glob patterns. | [homepage](https://github.com/jonschlinkert/expand-brackets "Expand POSIX bracket expressions (character classes) in glob patterns.")
-* [extglob](https://www.npmjs.com/package/extglob): Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob… [more](https://github.com/jonschlinkert/extglob) | [homepage](https://github.com/jonschlinkert/extglob "Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob patterns.")
-* [micromatch](https://www.npmjs.com/package/micromatch): Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch. | [homepage](https://github.com/jonschlinkert/micromatch "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
-* [nanomatch](https://www.npmjs.com/package/nanomatch): Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash… [more](https://github.com/jonschlinkert/nanomatch) | [homepage](https://github.com/jonschlinkert/nanomatch "Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash 4.3 wildcard support only (no support for exglobs, posix brackets or braces)")
+* [extglob](https://www.npmjs.com/package/extglob): Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob… [more](https://github.com/micromatch/extglob) | [homepage](https://github.com/micromatch/extglob "Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob patterns.")
+* [micromatch](https://www.npmjs.com/package/micromatch): Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch. | [homepage](https://github.com/micromatch/micromatch "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
+* [nanomatch](https://www.npmjs.com/package/nanomatch): Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash… [more](https://github.com/micromatch/nanomatch) | [homepage](https://github.com/micromatch/nanomatch "Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash 4.3 wildcard support only (no support for exglobs, posix brackets or braces)")
 
 ## History
 
@@ -666,25 +664,26 @@ Substantial breaking changes were made in v0.5.0! Most of these changes are part
 
 ## About
 
-### Related projects
-
-* [snapdragon-capture-set](https://www.npmjs.com/package/snapdragon-capture-set): Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have… [more](https://github.com/jonschlinkert/snapdragon-capture-set) | [homepage](https://github.com/jonschlinkert/snapdragon-capture-set "Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have an `open` and `close`, like braces, brackets, etc")
-* [snapdragon-capture](https://www.npmjs.com/package/snapdragon-capture): Snapdragon plugin that adds a capture method to the parser instance. | [homepage](https://github.com/jonschlinkert/snapdragon-capture "Snapdragon plugin that adds a capture method to the parser instance.")
-* [snapdragon-node](https://www.npmjs.com/package/snapdragon-node): Snapdragon utility for creating a new AST node in custom code, such as plugins. | [homepage](https://github.com/jonschlinkert/snapdragon-node "Snapdragon utility for creating a new AST node in custom code, such as plugins.")
-* [snapdragon-util](https://www.npmjs.com/package/snapdragon-util): Utilities for the snapdragon parser/compiler. | [homepage](https://github.com/jonschlinkert/snapdragon-util "Utilities for the snapdragon parser/compiler.")
-
-### Contributing
+<details>
+<summary><strong>Contributing</strong></summary>
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
 
-### Contributors
+</details>
 
-| **Commits** | **Contributor** | 
-| --- | --- |
-| 147 | [jonschlinkert](https://github.com/jonschlinkert) |
-| 2 | [doowb](https://github.com/doowb) |
+<details>
+<summary><strong>Running Tests</strong></summary>
 
-### Building docs
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+
+```sh
+$ npm install && npm test
+```
+
+</details>
+
+<details>
+<summary><strong>Building docs</strong></summary>
 
 _(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
 
@@ -694,26 +693,39 @@ To generate the readme, run the following command:
 $ npm install -g verbose/verb#dev verb-generate-readme && verb
 ```
 
-### Running tests
+</details>
 
-Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+### Related projects
 
-```sh
-$ npm install && npm test
-```
+A few of the libraries that use snapdragon:
+
+* [snapdragon-capture-set](https://www.npmjs.com/package/snapdragon-capture-set): Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have… [more](https://github.com/jonschlinkert/snapdragon-capture-set) | [homepage](https://github.com/jonschlinkert/snapdragon-capture-set "Plugin that adds a `.captureSet()` method to snapdragon, for matching and capturing substrings that have an `open` and `close`, like braces, brackets, etc")
+* [snapdragon-capture](https://www.npmjs.com/package/snapdragon-capture): Snapdragon plugin that adds a capture method to the parser instance. | [homepage](https://github.com/jonschlinkert/snapdragon-capture "Snapdragon plugin that adds a capture method to the parser instance.")
+* [snapdragon-node](https://www.npmjs.com/package/snapdragon-node): Snapdragon utility for creating a new AST node in custom code, such as plugins. | [homepage](https://github.com/jonschlinkert/snapdragon-node "Snapdragon utility for creating a new AST node in custom code, such as plugins.")
+* [snapdragon-util](https://www.npmjs.com/package/snapdragon-util): Utilities for the snapdragon parser/compiler. | [homepage](https://github.com/here-be/snapdragon-util "Utilities for the snapdragon parser/compiler.")
+
+### Contributors
+
+| **Commits** | **Contributor** | 
+| --- | --- |
+| 153 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 3 | [doowb](https://github.com/doowb) |
+| 1 | [danez](https://github.com/danez) |
+| 1 | [EdwardBetts](https://github.com/EdwardBetts) |
 
 ### Author
 
 **Jon Schlinkert**
 
+* [linkedin/in/jonschlinkert](https://linkedin.com/in/jonschlinkert)
 * [github/jonschlinkert](https://github.com/jonschlinkert)
 * [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
 
 ### License
 
-Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Copyright © 2018, [Jon Schlinkert](https://github.com/jonschlinkert).
 Released under the [MIT License](LICENSE).
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.5.0, on April 20, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on February 24, 2018._
