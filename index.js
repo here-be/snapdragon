@@ -30,7 +30,7 @@ function Snapdragon(options) {
   }
 
   this.define('cache', {});
-  this.options = extend({source: 'string'}, this.options);
+  this.options = extend({source: 'string'}, options);
   this.isSnapdragon = true;
   this.plugins = {
     fns: [],
