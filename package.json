@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "component-emitter": "^1.2.1",
-    "debug": "^3.1.0",
     "define-property": "^2.0.2",
     "extend-shallow": "^3.0.2",
     "get-value": "^2.0.6",
