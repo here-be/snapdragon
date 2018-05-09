@@ -1,7 +1,7 @@
 {
   "name": "snapdragon",
   "description": "Easy-to-use plugin system for creating powerful, fast and versatile parsers and compilers, with built-in source-map support.",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "homepage": "https://github.com/here-be/snapdragon",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
@@ -16,8 +16,7 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "lib",
-    "verbfile.js"
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -28,29 +27,28 @@
   },
   "dependencies": {
     "component-emitter": "^1.2.1",
-    "debug": "^2.6.2",
-    "define-property": "^0.2.5",
-    "extend-shallow": "^2.0.1",
+    "define-property": "^2.0.2",
+    "extend-shallow": "^3.0.2",
     "get-value": "^2.0.6",
     "isobject": "^3.0.0",
     "map-cache": "^0.2.2",
     "snapdragon-node": "^1.0.6",
-    "snapdragon-util": "^2.1.1",
+    "snapdragon-util": "^4.0.0",
     "source-map": "~0.6.0",
-    "source-map-resolve": "~0.5.1",
+    "source-map-resolve": "^0.5.0",
     "use": "^3.1.0"
   },
   "devDependencies": {
+    "mocha": "^3.2.0",
+    "snapdragon-capture-set": "^1.0.1",
+    "snapdragon-capture": "^0.2.0",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1",
-    "gulp-format-md": "^0.1.11",
     "gulp-istanbul": "^1.1.1",
+    "gulp-eslint": "^3.0.1",
     "gulp-mocha": "^3.0.1",
     "gulp-unused": "^0.2.1",
-    "mocha": "^3.2.0",
-    "snapdragon-capture": "^0.2.0",
-    "snapdragon-capture-set": "^1.0.1",
-    "verb-generate-readme": "^0.4.3"
+    "gulp-format-md": "^0.1.11",
+    "verb-generate-readme": "^0.6.0"
   },
   "keywords": [
     "lexer",
@@ -82,17 +80,15 @@
         "snapdragon-util"
       ]
     },
-    "lint": {
-      "reflinks": true
-    },
     "reflinks": [
       "css",
       "pug",
       "snapdragon-capture",
       "snapdragon-capture-set",
-      "snapdragon-node",
-      "verb",
-      "verb-generate-readme"
-    ]
+      "snapdragon-node"
+    ],
+    "lint": {
+      "reflinks": true
+    }
   }
 }
