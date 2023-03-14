@@ -30,7 +30,7 @@
     "define-property": "^2.0.2",
     "extend-shallow": "^3.0.2",
     "get-value": "^2.0.6",
-    "isobject": "^3.0.0",
+    "isobject": "^4.0.0",
     "map-cache": "^0.2.2",
     "snapdragon-node": "^1.0.6",
     "snapdragon-util": "^4.0.0",
